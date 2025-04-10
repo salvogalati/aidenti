@@ -1,6 +1,9 @@
 from flask import Flask, jsonify
+from flask_cors import CORS
 
 app = Flask(__name__)
+
+CORS(app)
 
 # Endpoint per ottenere tutti i messaggi
 @app.route('/messaggi', methods=['GET'])
