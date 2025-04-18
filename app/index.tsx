@@ -1,7 +1,11 @@
-import { Text } from "react-native";
+import {View, Text} from 'react-native';
 
-export default function() {
+export default function Home() {
 	return (
-		<Text>Ciao</Text>
-	);
+		<View className='w-full h-full flex justify-center items-center'>
+			<Text>
+				HOME
+			</Text>
+		</View>
+	)
 }
