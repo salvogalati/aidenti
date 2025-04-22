@@ -40,6 +40,18 @@ export default function Auth() {
 	const [isLoginPage, setIsLoginPage] = React.useState(true);
 	const [loading, setLoading] = React.useState(true);
 
+	const login = async (email: string, password: string) => {
+		const loginData = await fetch('https://4ef8c83ba8b6dc711a67359c35ad6540.serveo.net/login', {
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			method: 'post',                                                              
+			body: JSON.stringify({username: email, password})                                        
+		})
+		const res = await loginData.json();
+		console.log(res);
+	}
+
 	const isValidEmail = (email: string) => {
 		return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 	};
@@ -54,6 +66,7 @@ export default function Auth() {
 				password: !passwordValid,
 				confirmPassword: false,
 			});
+			login(inputValue.email, inputValue.password);
 		} else {
 			const passwordsMatch =
 				inputValue.password === inputValue.confirmPassword;
