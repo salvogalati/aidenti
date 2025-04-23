@@ -1,29 +1,14 @@
 import { Button, ButtonText } from "@/components/ui/button";
-import {
-	FormControl,
-	FormControlError,
-	FormControlErrorText,
-	FormControlErrorIcon,
-	FormControlLabel,
-	FormControlLabelText,
-} from "@/components/ui/form-control";
-import {
-	Input,
-	InputField,
-	InputIcon,
-	InputSlot,
-} from "@/components/ui/input";
 import { VStack } from "@/components/ui/vstack";
-import {
-	AlertCircleIcon,
-	EyeIcon,
-	EyeOffIcon,
-} from "@/components/ui/icon";
 import { Spinner } from "@/components/ui/spinner";
 import { Text } from "react-native";
 import React, { useEffect } from "react";
 import colors from "tailwindcss/colors";
-import { Switch } from "./components/ui/switch";
+import EmailInput from "./components/emailInput/emailInput";
+import PasswordInput from "./components/passwordInput/passwordInput";
+import ConfirmPasswordInput from "./components/confirmPasswordInput/confirmPasswordInput";
+import { handleState, handleSubmit } from "./utils/functionsAuth";
+import SwitchAuth from "./components/switchAuth/switchAuth";
 
 export default function Auth() {
 	const [inputValue, setInputValue] = React.useState({
@@ -39,49 +24,6 @@ export default function Auth() {
 	const [showPassword, setShowPassword] = React.useState(false);
 	const [isLoginPage, setIsLoginPage] = React.useState(true);
 	const [loading, setLoading] = React.useState(true);
-
-	const login = async (email: string, password: string) => {
-		const loginData = await fetch('https://4ef8c83ba8b6dc711a67359c35ad6540.serveo.net/login', {
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			method: 'post',                                                              
-			body: JSON.stringify({username: email, password})                                        
-		})
-		const res = await loginData.json();
-		console.log(res);
-	}
-
-	const isValidEmail = (email: string) => {
-		return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-	};
-
-	const handleSubmit = () => {
-		const emailValid = isValidEmail(inputValue.email);
-		const passwordValid = inputValue.password.length >= 6;
-
-		if (isLoginPage) {
-			setIsInvalid({
-				email: !emailValid,
-				password: !passwordValid,
-				confirmPassword: false,
-			});
-			login(inputValue.email, inputValue.password);
-		} else {
-			const passwordsMatch =
-				inputValue.password === inputValue.confirmPassword;
-
-			setIsInvalid({
-				email: !emailValid,
-				password: !passwordValid,
-				confirmPassword: !passwordsMatch,
-			});
-		}
-	};
-
-	const handleState = () => {
-		setShowPassword((prev) => !prev);
-	};
 
 	useEffect(() => {
 		const timer = setTimeout(() => {
@@ -107,118 +49,46 @@ export default function Auth() {
 						{isLoginPage ? "Log in" : "Sign in"}
 					</Text>
 
-					<FormControl isInvalid={isInvalid.email}>
-						<FormControlLabel>
-							<FormControlLabelText>Email</FormControlLabelText>
-						</FormControlLabel>
-						<Input className="my-1">
-							<InputField
-								type="text"
-								placeholder="Email"
-								value={inputValue.email}
-								onChangeText={(text) =>
-									setInputValue((prev) => ({
-										...prev,
-										email: text,
-									}))
-								}
-							/>
-						</Input>
-						<FormControlError className={`${isInvalid.email ? "flex" : "hidden"} items-center mb-3`}>
-							<FormControlErrorIcon as={AlertCircleIcon} />
-							<FormControlErrorText className="text-[10px]">
-								Please enter a valid email address.
-							</FormControlErrorText>
-						</FormControlError>
-					</FormControl>
+					<EmailInput
+						isInvalid={isInvalid}
+						inputValue={inputValue}
+						setInputValue={setInputValue}
+					/>
 
-					<FormControl isInvalid={isInvalid.password}>
-						<FormControlLabel>
-							<FormControlLabelText>Password</FormControlLabelText>
-						</FormControlLabel>
-						<Input className="my-1">
-							<InputField
-								type={showPassword ? "text" : "password"}
-								placeholder="Password"
-								value={inputValue.password}
-								onChangeText={(text) =>
-									setInputValue((prev) => ({
-										...prev,
-										password: text,
-									}))
-								}
-							/>
-							<InputSlot className="mr-2" onPress={handleState}>
-								<InputIcon as={showPassword ? EyeIcon : EyeOffIcon} />
-							</InputSlot>
-						</Input>
-						<FormControlError className={`${isInvalid.password ? "flex" : "hidden"} items-center`}>
-							<FormControlErrorIcon as={AlertCircleIcon} />
-							<FormControlErrorText className="text-[10px]">
-								At least 6 characters are required for the password.
-							</FormControlErrorText>
-						</FormControlError>
-					</FormControl>
+					<PasswordInput
+						isInvalid={isInvalid}
+						inputValue={inputValue}
+						setInputValue={setInputValue}
+						showPassword={showPassword}
+						handleState={() => handleState(setShowPassword)}
+					/>
 
 					{!isLoginPage && (
-						<FormControl isInvalid={isInvalid.confirmPassword}>
-							<FormControlLabel>
-								<FormControlLabelText>Confirm Password</FormControlLabelText>
-							</FormControlLabel>
-							<Input className="my-1">
-								<InputField
-									type={showPassword ? "text" : "password"}
-									placeholder="Confirm Password"
-									value={inputValue.confirmPassword}
-									onChangeText={(text) =>
-										setInputValue((prev) => ({
-											...prev,
-											confirmPassword: text,
-										}))
-									}
-								/>
-								<InputSlot className="mr-2" onPress={handleState}>
-									<InputIcon as={showPassword ? EyeIcon : EyeOffIcon} />
-								</InputSlot>
-							</Input>
-							<FormControlError className={`${isInvalid.confirmPassword ? "flex" : "hidden"} items-center`}>
-								<FormControlErrorIcon as={AlertCircleIcon} />
-								<FormControlErrorText className="text-[10px]">
-									Passwords must match.
-								</FormControlErrorText>
-							</FormControlError>
-						</FormControl>
+						<ConfirmPasswordInput
+							isInvalid={isInvalid}
+							inputValue={inputValue}
+							setInputValue={setInputValue}
+							showPassword={showPassword}
+							handleState={() => handleState(setShowPassword)}
+						/>
 					)}
 
 					<Button
 						className={`w-fit self-end mt-4 ${!canSubmit ? "opacity-50" : ""}`}
 						size="sm"
-						onPress={handleSubmit}
+						onPress={() => handleSubmit(inputValue, isLoginPage, setIsInvalid)}
 						disabled={!canSubmit}
 					>
 						<ButtonText>Submit</ButtonText>
 					</Button>
 
-					<VStack className="w-full items-center gap-2 mt-2">
-						<Text className="font-semibold">
-							{isLoginPage ? "Go to Sign in" : "Go to Log in"}
-						</Text>
-						<Switch
-							value={isLoginPage}
-							trackColor={{ false: colors.gray[300], true: colors.gray[500] }}
-							thumbColor={colors.gray[50]}
-							activeThumbColor={colors.gray[50]}
-							ios_backgroundColor={colors.gray[300]}
-							onToggle={() => {
-								setIsLoginPage(!isLoginPage);
-								setInputValue({
-									email: "",
-									password: "",
-									confirmPassword: "",
-								});
-							}}
-						/>
-					</VStack>
+					<SwitchAuth
+						isLoginPage={isLoginPage}
+						setIsLoginPage={setIsLoginPage}
+						setInputValue={setInputValue}
+						setIsInvalid={setIsInvalid}
+						setShowPassword={setShowPassword}
+					/>
 				</VStack>
 			)}
 		</VStack>
