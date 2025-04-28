@@ -1,9 +1,8 @@
 import { Button, ButtonText } from "@/components/ui/button";
 import { VStack } from "@/components/ui/vstack";
-import { Spinner } from "@/components/ui/spinner";
+import LottieView from 'lottie-react-native';
 import { Text } from "react-native";
 import React, { useEffect } from "react";
-import colors from "tailwindcss/colors";
 import EmailInput from "./components/emailInput/emailInput";
 import PasswordInput from "./components/passwordInput/passwordInput";
 import ConfirmPasswordInput from "./components/confirmPasswordInput/confirmPasswordInput";
@@ -42,7 +41,30 @@ export default function Auth() {
 	return (
 		<VStack className="w-full h-full justify-center items-center">
 			{loading ? (
-				<Spinner color={colors.gray[500]} />
+				<>
+				<VStack className="max-w-72 max-h-72 gap-2">
+					<LottieView
+						autoPlay
+						style={{
+							width: 200,
+							height: 200,
+						}}
+						loop
+						source={require('./assets/monsterLoad.json')}
+				/>
+				</VStack>
+				<VStack className="max-w-52 max-h-52 -mt-12">
+					<LottieView
+						autoPlay
+						style={{
+							width: 100,
+							height: 100,
+						}}
+						loop
+						source={require('./assets/load.json')}
+					/>
+				</VStack>
+			</>
 			) : (
 				<VStack className="w-full max-w-[300px] rounded-md border border-background-200 p-4">
 					<Text className="text-[30px] mb-2 font-semibold">
