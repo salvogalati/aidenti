@@ -1,24 +1,59 @@
 import { IInputValue, IIsInvalid } from "@/types/emailInput";
 import React, { SetStateAction } from "react";
 
-const login = async (email: string, password: string) => {
+const login = async (email: string, password: string, setMessage: React.Dispatch<SetStateAction<string>>) => {
 	try {
+
 		const loginData = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/login`, {
 			headers: {
 				'Content-Type': 'application/json',
 			},
 			method: 'POST',
-			body: JSON.stringify({ username: email, password }),
+			body: JSON.stringify({email, password}),
 		});
+
+		const data = await loginData.json();
 	
 		if (!loginData.ok) {
-			throw new Error('Login failed');
+			throw new Error(data.message || 'Login failed');
 		}
-	
-		const res = await loginData.json();
-		console.log(res);
+		setMessage(data.message)
 	} catch (error) {
-		console.error('Error during login:', error);
+		if (error instanceof Error) {
+			console.error('Error during login:', error.message);
+			setMessage(error.message)
+		} else {
+			console.error('Unknown error during login:', error);
+		}
+	}
+}
+
+const signin = async (email: string, password: string, setMessage: React.Dispatch<SetStateAction<string>>) => {
+	try {
+
+		const signinData = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/register`, {
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			method: 'POST',
+			body: JSON.stringify({email, password}),
+		});
+
+		const data = await signinData.json();
+	
+		if (!signinData.ok) {
+			throw new Error(data.message || 'Signin failed');
+		}
+
+		setMessage(data.message)
+
+	} catch (error) {
+		if (error instanceof Error) {
+			console.error('Error during signin:', error.message);
+			setMessage(error.message)
+		} else {
+			console.error('Unknown error during signin:', error);
+		}
 	}
 }
 
@@ -26,7 +61,7 @@ export const isValidEmail = (email: string) => {
 	return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 };
 
-export const handleSubmit = (inputValue: IInputValue, isLoginPage: boolean, setIsInvalid: React.Dispatch<SetStateAction<IIsInvalid>>) => {
+export const handleSubmit = (inputValue: IInputValue, isLoginPage: boolean, setIsInvalid: React.Dispatch<SetStateAction<IIsInvalid>>, setMessage:React.Dispatch<SetStateAction<string>>) => {
 	const emailValid = isValidEmail(inputValue.email);
 	const passwordValid = inputValue.password.length >= 6;
 
@@ -36,7 +71,7 @@ export const handleSubmit = (inputValue: IInputValue, isLoginPage: boolean, setI
 			password: !passwordValid,
 			confirmPassword: false,
 		});
-		login(inputValue.email, inputValue.password);
+		login(inputValue.email, inputValue.password, setMessage);
 	} else {
 		const passwordsMatch =
 			inputValue.password === inputValue.confirmPassword;
@@ -46,6 +81,7 @@ export const handleSubmit = (inputValue: IInputValue, isLoginPage: boolean, setI
 			password: !passwordValid,
 			confirmPassword: !passwordsMatch,
 		});
+		signin(inputValue.email, inputValue.confirmPassword, setMessage)
 	}
 };
 

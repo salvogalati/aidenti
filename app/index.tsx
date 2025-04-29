@@ -26,6 +26,7 @@ export default function Auth() {
 	const [showPassword, setShowPassword] = React.useState(false);
 	const [isLoginPage, setIsLoginPage] = React.useState(true);
 	const [loading, setLoading] = React.useState(true);
+	const [message, setMessage] = React.useState('');
 	const [fontsLoaded] = useFonts({
 		IndieFlower_400Regular,
 	});
@@ -88,10 +89,17 @@ export default function Auth() {
 						/>
 					)}
 
+					{
+						message &&
+						<Text className="text-end mt-2">
+							{message}
+						</Text>
+					}
+
 					<Button
 						className={`w-fit self-end mt-4 ${!canSubmit ? "opacity-50" : ""}`}
 						size="sm"
-						onPress={() => handleSubmit(inputValue, isLoginPage, setIsInvalid)}
+						onPress={() => handleSubmit(inputValue, isLoginPage, setIsInvalid, setMessage)}
 						disabled={!canSubmit}
 					>
 						<ButtonText>Submit</ButtonText>
@@ -103,6 +111,7 @@ export default function Auth() {
 						setInputValue={setInputValue}
 						setIsInvalid={setIsInvalid}
 						setShowPassword={setShowPassword}
+						setMessage={setMessage}
 					/>
 				</VStack>
 			)}

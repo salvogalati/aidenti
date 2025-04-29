@@ -4,7 +4,7 @@ import { Switch } from "../ui/switch";
 import colors from "tailwindcss/colors";
 import { ISwitchAuth } from "@/types/switchAuth";
 
-export default function SwitchAuth({isLoginPage, setIsLoginPage, setInputValue, setIsInvalid, setShowPassword}: ISwitchAuth) {
+export default function SwitchAuth({isLoginPage, setIsLoginPage, setInputValue, setIsInvalid, setShowPassword, setMessage}: ISwitchAuth) {
 	return (
 		<VStack className="w-full items-center gap-2 mt-2">
 			<Text className="font-semibold">
@@ -29,6 +29,7 @@ export default function SwitchAuth({isLoginPage, setIsLoginPage, setInputValue, 
 						confirmPassword: false,
 					})
 					setShowPassword(false);
+					setMessage('')
 				}}
 			/>
 		</VStack>
