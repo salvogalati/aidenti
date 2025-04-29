@@ -36,3 +36,26 @@ yarn-error.*
 *.tsbuildinfo
 
 app-example
+
+
+# Cartelle da ignorare
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env/
+.venv/
+build/
+dist/
+
+# File temporanei
+*.log
+*.tmp
+*.bak
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Dipendenze (es. per Poetry)
+poetry.lock
