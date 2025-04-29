@@ -198,6 +198,48 @@ module.exports = {
         'soft-4': '0px 0px 40px rgba(38, 38, 38, 0.1)',
       },
     },
+    keyframes: {
+      'walk-and-flip': {
+        '0%': {
+          right: '0rem',
+          transform: 'scaleX(-1) translateY(0)',
+        },
+        '49%': {
+          transform: 'scaleX(-1) translateY(0)',
+        },
+        '50%': {
+          right: '2rem',
+          transform: 'scaleX(-1) translateY(-0.5rem)',
+        },
+        '51%': {
+          transform: 'scaleX(1) translateY(0)',
+        },
+        '98%': {
+          transform: 'scaleX(1) translateY(0)',
+        },
+        '99%': {
+          transform: 'scaleX(1) translateY(-0.5rem)',
+        },
+        '100%': {
+          right: '0rem',
+          transform: 'scaleX(-1) translateY(0)',
+        },
+      },
+      hesitate: {
+        '0%':   { transform: 'scaleX(1) rotateZ(0deg) translateY(0)' },
+        '15%':  { transform: 'scaleX(1.1) rotateZ(6deg) translateY(-1px)' },
+        '30%':  { transform: 'scaleX(0.9) rotateZ(-6deg) translateY(1px)' },
+        '45%':  { transform: 'scaleX(1.08) rotateZ(4deg) translateY(-1px)' },
+        '60%':  { transform: 'scaleX(0.92) rotateZ(-4deg) translateY(1px)' },
+        '75%':  { transform: 'scaleX(1.05) rotateZ(3deg) translateY(-1px)' },
+        '90%':  { transform: 'scaleX(0.95) rotateZ(-3deg) translateY(1px)' },
+        '100%': { transform: 'scaleX(1) rotateZ(0deg) translateY(0)' },
+      },
+    },
+    animation: {
+      'walk-and-flip': 'walk-and-flip 5s ease-in-out infinite',
+      hesitate: 'hesitate 0.8s ease-in-out infinite',
+    },
   },
   plugins: [gluestackPlugin],
 };

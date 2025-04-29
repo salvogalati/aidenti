@@ -9,6 +9,8 @@ import { handleState, handleSubmit } from "./utils/functionsAuth";
 import SwitchAuth from "./components/switchAuth/switchAuth";
 import Loader from "./components/loader/loader";
 import { Image } from 'expo-image';
+import LottieView from "lottie-react-native";
+import Monster from "./components/loader/components/monster";
 
 export default function Auth() {
 	const [inputValue, setInputValue] = React.useState({
@@ -33,11 +35,13 @@ export default function Auth() {
 	}, []);
 
 	const canSubmit =
-	isLoginPage
-		? inputValue.email.trim().length > 0 && inputValue.password.trim().length > 0
-		: inputValue.email.trim().length > 0 &&
-			inputValue.password.trim().length > 0 &&
-				inputValue.confirmPassword.trim().length > 0;
+		isLoginPage
+			? inputValue.email.trim().length > 0 && inputValue.password.trim().length > 0
+			: inputValue.email.trim().length > 0 &&
+				inputValue.password.trim().length > 0 &&
+					inputValue.confirmPassword.trim().length > 0;
+
+	const hasErrors = Object.values(isInvalid).some(Boolean);
 
 	return (
 		<VStack className="w-full h-full justify-center items-center">
@@ -47,7 +51,8 @@ export default function Auth() {
 				<Loader />
 				</>
 			) : (
-				<VStack className="w-full max-w-[300px] rounded-md border border-background-200 p-4">
+				<VStack className="w-full max-w-[300px] rounded-md border border-background-200 p-4 relative">
+					<Monster classMonster={`absolute top-[3px] right-0 max-w-52 max-h-52 gap-2 ${hasErrors ? 'animate-hesitate' : 'animate-walk-and-flip'}`} />
 					<Text className="text-[30px] mb-2 font-semibold">
 						{isLoginPage ? "Log in" : "Sign in"}
 					</Text>

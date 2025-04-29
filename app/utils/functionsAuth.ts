@@ -2,15 +2,24 @@ import { IInputValue, IIsInvalid } from "@/types/emailInput";
 import React, { SetStateAction } from "react";
 
 const login = async (email: string, password: string) => {
-	const loginData = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/login`, {
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		method: 'post',                                                              
-		body: JSON.stringify({username: email, password})                                        
-	})
-	const res = await loginData.json();
-	console.log(res);
+	try {
+		const loginData = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/login`, {
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			method: 'POST',
+			body: JSON.stringify({ username: email, password }),
+		});
+	
+		if (!loginData.ok) {
+			throw new Error('Login failed');
+		}
+	
+		const res = await loginData.json();
+		console.log(res);
+	} catch (error) {
+		console.error('Error during login:', error);
+	}
 }
 
 export const isValidEmail = (email: string) => {

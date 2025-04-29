@@ -1,20 +1,11 @@
 import LottieView from "lottie-react-native";
 import { VStack } from "../ui/vstack";
+import Monster from "./components/monster";
 
 export default function Loader() {
 	return (
 		<>
-			<VStack className="max-w-52 max-h-52 gap-2">
-				<LottieView
-					autoPlay
-					style={{
-						width: 100,
-						height: 100,
-					}}
-					loop
-					source={require('../../assets/monsterLoad.json')}
-				/>
-			</VStack>
+			<Monster classMonster="max-w-52 max-h-52" />
 			<VStack className="max-w-24 max-h-24 -mt-6">
 				<LottieView
 					autoPlay
