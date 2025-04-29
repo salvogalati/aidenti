@@ -5,26 +5,28 @@ CSV_FILE = 'users.csv'
 
 def load_users():
     if not os.path.exists(CSV_FILE):
-        df = pd.DataFrame(columns=['username', 'password'])
+        df = pd.DataFrame(columns=['email', 'password'])
         df.to_csv(CSV_FILE, index=False)
     return pd.read_csv(CSV_FILE)
 
 def save_users(df):
     df.to_csv(CSV_FILE, index=False)
 
-def user_exists(username):
+def user_exists(email):
     df = load_users()
-    return username in df['username'].values
+    return email in df['email'].values
 
-def check_credentials(username, password):
+def check_credentials(email, password):
     df = load_users()
-    user_row = df[df['username'] == username]
-    if not user_row.empty and user_row.iloc[0]['password'] == password:
-        return True
-    return False
+    user_row = df[df['email'] == email]
+    if user_row.empty:
+        return False, "Invalid User"
+    if user_row.iloc[0]['password'] != password:
+        return  False , "Invalid Password"
+    return True, "Login successful"
 
-def add_user(username, password):
+def add_user(email, password):
     df = load_users()
-    new_user = pd.DataFrame([[username, password]], columns=['username', 'password'])
+    new_user = pd.DataFrame([[email, password]], columns=['email', 'password'])
     df = pd.concat([df, new_user], ignore_index=True)
     save_users(df)
