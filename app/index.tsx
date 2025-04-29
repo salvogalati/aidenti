@@ -8,6 +8,7 @@ import ConfirmPasswordInput from "./components/confirmPasswordInput/confirmPassw
 import { handleState, handleSubmit } from "./utils/functionsAuth";
 import SwitchAuth from "./components/switchAuth/switchAuth";
 import Loader from "./components/loader/loader";
+import { Image } from 'expo-image';
 
 export default function Auth() {
 	const [inputValue, setInputValue] = React.useState({
@@ -41,7 +42,10 @@ export default function Auth() {
 	return (
 		<VStack className="w-full h-full justify-center items-center">
 			{loading ? (
+				<>
+				<Image style={{ width: 320, height: 320 }} source={require('./assets/logo.png')} />
 				<Loader />
+				</>
 			) : (
 				<VStack className="w-full max-w-[300px] rounded-md border border-background-200 p-4">
 					<Text className="text-[30px] mb-2 font-semibold">
