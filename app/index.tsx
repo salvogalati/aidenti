@@ -9,7 +9,7 @@ import { handleState, handleSubmit } from "./utils/functionsAuth";
 import SwitchAuth from "./components/switchAuth/switchAuth";
 import Loader from "./components/loader/loader";
 import { Image } from 'expo-image';
-import LottieView from "lottie-react-native";
+import { IndieFlower_400Regular, useFonts } from '@expo-google-fonts/indie-flower';
 import Monster from "./components/loader/components/monster";
 
 export default function Auth() {
@@ -26,6 +26,9 @@ export default function Auth() {
 	const [showPassword, setShowPassword] = React.useState(false);
 	const [isLoginPage, setIsLoginPage] = React.useState(true);
 	const [loading, setLoading] = React.useState(true);
+	const [fontsLoaded] = useFonts({
+		IndieFlower_400Regular,
+	});
 
 	useEffect(() => {
 		const timer = setTimeout(() => {
@@ -43,6 +46,10 @@ export default function Auth() {
 
 	const hasErrors = Object.values(isInvalid).some(Boolean);
 
+	if (!fontsLoaded) {
+		return null;
+	}
+
 	return (
 		<VStack className="w-full h-full justify-center items-center">
 			{loading ? (
@@ -53,7 +60,7 @@ export default function Auth() {
 			) : (
 				<VStack className="w-full max-w-[300px] rounded-md border border-background-200 p-4 relative">
 					<Monster classMonster={`absolute top-[3px] right-0 max-w-52 max-h-52 gap-2 ${hasErrors ? 'animate-hesitate' : 'animate-walk-and-flip'}`} />
-					<Text className="text-[30px] mb-2 font-semibold">
+					<Text style={{ fontFamily: 'IndieFlower_400Regular' }} className="text-[30px] mb-2 font-semibold">
 						{isLoginPage ? "Log in" : "Sign in"}
 					</Text>
 
