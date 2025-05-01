@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from db import user_exists, check_credentials, add_user, load_users
+from db import user_exists, check_credentials, add_user, verify_user_by_token
+from email_verification import send_verification_email
+import uuid
 
 app = Flask(__name__)
 
@@ -47,8 +49,24 @@ def register():
     if user_exists(email):
         return jsonify({'message': 'Email already exists'}), 409
 
-    add_user(email, password)
+    token = str(uuid.uuid4())
+    add_user(email, password, token)
+    verification_link = f"https://aidenti.it/verify?token={token}"
+    send_verification_email(email, verification_link)
     return jsonify({'message': 'User registered successfully'}), 201
+
+@app.route('/verify', methods=['GET'])
+def verify_email():
+    token = request.args.get('token')
+    if not token:
+        return jsonify({'status': 'error', 'message': 'Missing token'}), 400
+
+    result, message = verify_user_by_token(token)
+
+    if result == False:
+        return jsonify({'status': 'error', 'message': message}), 404
+    else:
+        return jsonify({'status': 'success', 'message': message}), 200
 
 if __name__ == '__main__':
     app.run(debug=True)
