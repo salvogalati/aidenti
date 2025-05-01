@@ -1,4 +1,4 @@
-import { Button, ButtonText } from "@/components/ui/button";
+import { Button, ButtonSpinner, ButtonText } from "@/components/ui/button";
 import { VStack } from "@/components/ui/vstack";
 import { Text } from "react-native";
 import React, { useEffect } from "react";
@@ -10,7 +10,8 @@ import SwitchAuth from "./components/switchAuth/switchAuth";
 import Loader from "./components/loader/loader";
 import { Image } from 'expo-image';
 import { IndieFlower_400Regular, useFonts } from '@expo-google-fonts/indie-flower';
-import Monster from "./components/loader/components/monster";
+import Monster from "./components/monster/monster";
+import colors from "tailwindcss/colors";
 
 export default function Auth() {
 	const [inputValue, setInputValue] = React.useState({
@@ -26,6 +27,7 @@ export default function Auth() {
 	const [showPassword, setShowPassword] = React.useState(false);
 	const [isLoginPage, setIsLoginPage] = React.useState(true);
 	const [loading, setLoading] = React.useState(true);
+	const [isSending, setIsSending] = React.useState(false);
 	const [message, setMessage] = React.useState('');
 	const [fontsLoaded] = useFonts({
 		IndieFlower_400Regular,
@@ -55,7 +57,7 @@ export default function Auth() {
 		<VStack className="w-full h-full justify-center items-center">
 			{loading ? (
 				<>
-				<Image style={{ width: 320, height: 320 }} source={require('./assets/logo.png')} />
+				<Image style={{ width: 320, height: 320 }} source={require('./assets/logoApp.png')} />
 				<Loader />
 				</>
 			) : (
@@ -99,9 +101,13 @@ export default function Auth() {
 					<Button
 						className={`w-fit self-end mt-4 ${!canSubmit ? "opacity-50" : ""}`}
 						size="sm"
-						onPress={() => handleSubmit(inputValue, isLoginPage, setIsInvalid, setMessage)}
-						disabled={!canSubmit}
+						onPress={() => handleSubmit(inputValue, isLoginPage, setIsInvalid, setMessage, setIsSending)}
+						disabled={!canSubmit || isSending}
 					>
+						{
+							isSending &&
+								<ButtonSpinner color={colors.gray[400]} />
+						}
 						<ButtonText>Submit</ButtonText>
 					</Button>
 
@@ -112,6 +118,7 @@ export default function Auth() {
 						setIsInvalid={setIsInvalid}
 						setShowPassword={setShowPassword}
 						setMessage={setMessage}
+						isSending={isSending}
 					/>
 				</VStack>
 			)}

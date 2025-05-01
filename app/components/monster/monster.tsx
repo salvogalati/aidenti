@@ -1,6 +1,6 @@
 import { VStack } from "@/components/ui/vstack";
 import LottieView from "lottie-react-native";
-import IMonster from "../types/monster";
+import IMonster from "@/types/monster";
 
 export default function Monster({classMonster}: IMonster) {
 	return (
@@ -12,7 +12,7 @@ export default function Monster({classMonster}: IMonster) {
 					height: 100,
 				}}
 				loop
-				source={require('../../../assets/monsterLoad.json')}
+				source={require('../../assets/monsterLoad.json')}
 			/>
 		</VStack>
 	);

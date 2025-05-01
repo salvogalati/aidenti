@@ -8,4 +8,5 @@ export interface ISwitchAuth {
 	setIsInvalid: React.Dispatch<SetStateAction<IIsInvalid>>
 	setShowPassword: React.Dispatch<SetStateAction<boolean>>;
 	setMessage: React.Dispatch<SetStateAction<string>>;
+	isSending: boolean;
 }

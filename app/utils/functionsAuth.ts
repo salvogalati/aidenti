@@ -1,9 +1,10 @@
 import { IInputValue, IIsInvalid } from "@/types/emailInput";
 import React, { SetStateAction } from "react";
 
-const login = async (email: string, password: string, setMessage: React.Dispatch<SetStateAction<string>>) => {
+const login = async (email: string, password: string, setMessage: React.Dispatch<SetStateAction<string>>, setIsSending: React.Dispatch<SetStateAction<boolean>>) => {
 	try {
 
+		setIsSending(true);
 		const loginData = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/login`, {
 			headers: {
 				'Content-Type': 'application/json',
@@ -25,12 +26,15 @@ const login = async (email: string, password: string, setMessage: React.Dispatch
 		} else {
 			console.error('Unknown error during login:', error);
 		}
+	} finally {
+		setIsSending(false);
 	}
 }
 
-const signin = async (email: string, password: string, setMessage: React.Dispatch<SetStateAction<string>>) => {
+const signin = async (email: string, password: string, setMessage: React.Dispatch<SetStateAction<string>>, setIsSending: React.Dispatch<SetStateAction<boolean>>) => {
 	try {
 
+		setIsSending(true);
 		const signinData = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/register`, {
 			headers: {
 				'Content-Type': 'application/json',
@@ -54,6 +58,8 @@ const signin = async (email: string, password: string, setMessage: React.Dispatc
 		} else {
 			console.error('Unknown error during signin:', error);
 		}
+	} finally {
+		setIsSending(false);
 	}
 }
 
@@ -61,7 +67,7 @@ export const isValidEmail = (email: string) => {
 	return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 };
 
-export const handleSubmit = (inputValue: IInputValue, isLoginPage: boolean, setIsInvalid: React.Dispatch<SetStateAction<IIsInvalid>>, setMessage:React.Dispatch<SetStateAction<string>>) => {
+export const handleSubmit = (inputValue: IInputValue, isLoginPage: boolean, setIsInvalid: React.Dispatch<SetStateAction<IIsInvalid>>, setMessage:React.Dispatch<SetStateAction<string>>, setIsSending: React.Dispatch<SetStateAction<boolean>>) => {
 	const emailValid = isValidEmail(inputValue.email);
 	const passwordValid = inputValue.password.length >= 6;
 
@@ -71,7 +77,7 @@ export const handleSubmit = (inputValue: IInputValue, isLoginPage: boolean, setI
 			password: !passwordValid,
 			confirmPassword: false,
 		});
-		login(inputValue.email, inputValue.password, setMessage);
+		login(inputValue.email, inputValue.password, setMessage, setIsSending);
 	} else {
 		const passwordsMatch =
 			inputValue.password === inputValue.confirmPassword;
@@ -81,7 +87,7 @@ export const handleSubmit = (inputValue: IInputValue, isLoginPage: boolean, setI
 			password: !passwordValid,
 			confirmPassword: !passwordsMatch,
 		});
-		signin(inputValue.email, inputValue.confirmPassword, setMessage)
+		signin(inputValue.email, inputValue.confirmPassword, setMessage, setIsSending)
 	}
 };
 
