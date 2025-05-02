@@ -51,19 +51,20 @@ def register():
 
     token = str(uuid.uuid4())
     add_user(email, password, token)
-    verification_link = f"https://aidenti.it/verify?token={token}"
+    verification_link = f"http://localhost:8081?token={token}"
     send_verification_email(email, verification_link)
-    return jsonify({'message': 'User registered successfully'}), 201
+    return jsonify({'message': 'User registered successfully \n Check your email to validate your account'}), 201
 
-@app.route('/verify', methods=['GET'])
+@app.route('/verify', methods=['PATCH'])
 def verify_email():
-    token = request.args.get('token')
+    data = request.get_json()
+    token = data.get('token')
     if not token:
         return jsonify({'status': 'error', 'message': 'Missing token'}), 400
 
     result, message = verify_user_by_token(token)
 
-    if result == False:
+    if not result:
         return jsonify({'status': 'error', 'message': message}), 404
     else:
         return jsonify({'status': 'success', 'message': message}), 200

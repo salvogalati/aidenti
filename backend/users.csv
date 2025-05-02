@@ -1,6 +1,2 @@
-email,password
-nicola@gmail.it,CiaoSalvo
-SalvoInterista@gmail.com,CiaoSalvo
-salvoInterista@gmail.com,CiaoSalvo
-SalvatoreInterista@gmail.com,CiaoSalvo
-Salvointerista@gmail.com,123456
+email,password,verified,token-verification,first-access
+nicolamarmugi1@gmail.com,Ciaooooooo,False,2e2f3863-a7a4-4c95-948c-f4c0ba9fc8b3,False

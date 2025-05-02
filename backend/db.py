@@ -5,7 +5,7 @@ CSV_FILE = 'users.csv'
 
 def load_users():
     if not os.path.exists(CSV_FILE):
-        df = pd.DataFrame(columns=['email', 'password', "verified", "first-access"])
+        df = pd.DataFrame(columns=['email', 'password', "verified", "token-verification", "first-access"])
         df.to_csv(CSV_FILE, index=False)
     return pd.read_csv(CSV_FILE)
 
@@ -18,17 +18,17 @@ def user_exists(email):
 
 def verify_user_by_token(token):
     df = load_users()
-    user = df[df['verified'] == token]
+    user = df[df['token-verification'] == token]
 
     if user.empty:
-        return False, "User not found"
+        return False, "User not found 😠"
 
-    if user.iloc[0]['verified'] == True:
-        return True, 'Already verified'
+    if user.iloc[0]['verified']:
+        return True, 'Already verified 🤨'
 
-    df.loc[df['verified'] == token, 'verified'] = True
+    df.loc[df['token-verification'] == token, 'verified'] = True
     save_users(df)
-    return True, 'Email verified successfully'
+    return True, 'Email verified successfully 🥳'
 
 def check_credentials(email, password):
     df = load_users()
@@ -37,12 +37,12 @@ def check_credentials(email, password):
         return False, "Invalid User"
     if user_row.iloc[0]['password'] != password:
         return  False , "Invalid Password"
-    if user_row.iloc[0]['verified'] == False:
+    if not user_row.iloc[0]['verified']:
         return  False , "Email not verified"
     return True, "Login successful"
 
 def add_user(email, password, token):
     df = load_users()
-    new_user = pd.DataFrame([[email, password, token, False]], columns=['email', 'password', "verified", "first-access"])
+    new_user = pd.DataFrame([[email, password, False, token, False]], columns=['email', 'password', "verified", "token-verification", "first-access"])
     df = pd.concat([df, new_user], ignore_index=True)
     save_users(df)
