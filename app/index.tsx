@@ -5,7 +5,7 @@ import React, { useEffect } from "react";
 import EmailInput from "./components/emailInput/emailInput";
 import PasswordInput from "./components/passwordInput/passwordInput";
 import ConfirmPasswordInput from "./components/confirmPasswordInput/confirmPasswordInput";
-import { handleState, handleSubmit } from "./utils/functionsAuth";
+import { getTokenFromUrl, handleState, handleSubmit, verifyEmail } from "./utils/functionsAuth";
 import SwitchAuth from "./components/switchAuth/switchAuth";
 import Loader from "./components/loader/loader";
 import { Image } from 'expo-image';
@@ -32,6 +32,7 @@ export default function Auth() {
 	const [fontsLoaded] = useFonts({
 		IndieFlower_400Regular,
 	});
+	const [token, setToken] = React.useState('');
 
 	useEffect(() => {
 		const timer = setTimeout(() => {
@@ -40,12 +41,19 @@ export default function Auth() {
 		return () => clearTimeout(timer);
 	}, []);
 
+	useEffect(() => {
+		getTokenFromUrl(setToken);
+		if (token) {
+			verifyEmail(token, setMessage);
+		}
+	}, [token]);
+
 	const canSubmit =
 		isLoginPage
 			? inputValue.email.trim().length > 0 && inputValue.password.trim().length > 0
 			: inputValue.email.trim().length > 0 &&
-				inputValue.password.trim().length > 0 &&
-					inputValue.confirmPassword.trim().length > 0;
+			inputValue.password.trim().length > 0 &&
+			inputValue.confirmPassword.trim().length > 0;
 
 	const hasErrors = Object.values(isInvalid).some(Boolean);
 
@@ -57,8 +65,8 @@ export default function Auth() {
 		<VStack className="w-full h-full justify-center items-center">
 			{loading ? (
 				<>
-				<Image style={{ width: 320, height: 320 }} source={require('./assets/logoApp.png')} />
-				<Loader />
+					<Image style={{ width: 320, height: 320 }} source={require('./assets/logoApp.png')} />
+					<Loader />
 				</>
 			) : (
 				<VStack className="w-full max-w-[300px] rounded-md border border-background-200 p-4 relative">
@@ -106,7 +114,7 @@ export default function Auth() {
 					>
 						{
 							isSending &&
-								<ButtonSpinner color={colors.gray[400]} />
+							<ButtonSpinner color={colors.gray[400]} />
 						}
 						<ButtonText>Submit</ButtonText>
 					</Button>

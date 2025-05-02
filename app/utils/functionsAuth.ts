@@ -1,5 +1,6 @@
 import { IInputValue, IIsInvalid } from "@/types/emailInput";
 import React, { SetStateAction } from "react";
+import { Linking } from "react-native";
 
 const login = async (email: string, password: string, setMessage: React.Dispatch<SetStateAction<string>>, setIsSending: React.Dispatch<SetStateAction<boolean>>) => {
 	try {
@@ -10,11 +11,11 @@ const login = async (email: string, password: string, setMessage: React.Dispatch
 				'Content-Type': 'application/json',
 			},
 			method: 'POST',
-			body: JSON.stringify({email, password}),
+			body: JSON.stringify({ email, password }),
 		});
 
 		const data = await loginData.json();
-	
+
 		if (!loginData.ok) {
 			throw new Error(data.message || 'Login failed');
 		}
@@ -40,11 +41,11 @@ const signin = async (email: string, password: string, setMessage: React.Dispatc
 				'Content-Type': 'application/json',
 			},
 			method: 'POST',
-			body: JSON.stringify({email, password}),
+			body: JSON.stringify({ email, password }),
 		});
 
 		const data = await signinData.json();
-	
+
 		if (!signinData.ok) {
 			throw new Error(data.message || 'Signin failed');
 		}
@@ -67,7 +68,7 @@ export const isValidEmail = (email: string) => {
 	return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 };
 
-export const handleSubmit = (inputValue: IInputValue, isLoginPage: boolean, setIsInvalid: React.Dispatch<SetStateAction<IIsInvalid>>, setMessage:React.Dispatch<SetStateAction<string>>, setIsSending: React.Dispatch<SetStateAction<boolean>>) => {
+export const handleSubmit = (inputValue: IInputValue, isLoginPage: boolean, setIsInvalid: React.Dispatch<SetStateAction<IIsInvalid>>, setMessage: React.Dispatch<SetStateAction<string>>, setIsSending: React.Dispatch<SetStateAction<boolean>>) => {
 	const emailValid = isValidEmail(inputValue.email);
 	const passwordValid = inputValue.password.length >= 6;
 
@@ -94,3 +95,43 @@ export const handleSubmit = (inputValue: IInputValue, isLoginPage: boolean, setI
 export const handleState = (setShowPassword: React.Dispatch<SetStateAction<boolean>>) => {
 	setShowPassword((prev: boolean) => !prev);
 };
+
+export async function getTokenFromUrl(setToken: React.Dispatch<SetStateAction<string>>) {
+	const url = await Linking.getInitialURL();
+	if (url) {
+		const parsedUrl = new URL(url);
+		const tokenParam = parsedUrl.searchParams.get('token');
+		if (tokenParam) {
+			setToken(tokenParam);
+		}
+	}
+}
+
+export const verifyEmail = async (token: string, setMessage: React.Dispatch<SetStateAction<string>>) => {
+	try {
+
+		const tokenData = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/verify`, {
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			method: 'PATCH',
+			body: JSON.stringify({ token }),
+		});
+
+		const data = await tokenData.json();
+
+		if (!tokenData.ok) {
+			throw new Error(data.message || 'Verify failed');
+		}
+
+		setMessage(data.message);
+
+	} catch (error) {
+		if (error instanceof Error) {
+			console.error('Error during verify:', error.message);
+			setMessage(error.message)
+		} else {
+			console.error('Unknown error during verify:', error);
+		}
+	}
+}
