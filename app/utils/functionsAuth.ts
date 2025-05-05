@@ -1,8 +1,9 @@
 import { IInputValue, IIsInvalid } from "@/types/emailInput";
 import React, { SetStateAction } from "react";
 import { Linking } from "react-native";
+import { Router } from "expo-router";
 
-const login = async (email: string, password: string, setMessage: React.Dispatch<SetStateAction<string>>, setIsSending: React.Dispatch<SetStateAction<boolean>>) => {
+const login = async (email: string, password: string, setMessage: React.Dispatch<SetStateAction<string>>, setIsSending: React.Dispatch<SetStateAction<boolean>>, router: Router) => {
 	try {
 
 		setIsSending(true);
@@ -19,7 +20,14 @@ const login = async (email: string, password: string, setMessage: React.Dispatch
 		if (!loginData.ok) {
 			throw new Error(data.message || 'Login failed');
 		}
+
 		setMessage(data.message)
+
+		if (!data.firstAccess) {
+			router.push('/first-access')
+		} else {
+			router.push('/dashboard')
+		}
 	} catch (error) {
 		if (error instanceof Error) {
 			console.error('Error during login:', error.message);
@@ -68,7 +76,7 @@ export const isValidEmail = (email: string) => {
 	return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 };
 
-export const handleSubmit = (inputValue: IInputValue, isLoginPage: boolean, setIsInvalid: React.Dispatch<SetStateAction<IIsInvalid>>, setMessage: React.Dispatch<SetStateAction<string>>, setIsSending: React.Dispatch<SetStateAction<boolean>>) => {
+export const handleSubmit = (inputValue: IInputValue, isLoginPage: boolean, setIsInvalid: React.Dispatch<SetStateAction<IIsInvalid>>, setMessage: React.Dispatch<SetStateAction<string>>, setIsSending: React.Dispatch<SetStateAction<boolean>>, router: Router) => {
 	const emailValid = isValidEmail(inputValue.email);
 	const passwordValid = inputValue.password.length >= 6;
 
@@ -78,7 +86,7 @@ export const handleSubmit = (inputValue: IInputValue, isLoginPage: boolean, setI
 			password: !passwordValid,
 			confirmPassword: false,
 		});
-		login(inputValue.email, inputValue.password, setMessage, setIsSending);
+		login(inputValue.email, inputValue.password, setMessage, setIsSending, router);
 	} else {
 		const passwordsMatch =
 			inputValue.password === inputValue.confirmPassword;

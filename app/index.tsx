@@ -5,13 +5,14 @@ import React, { useEffect } from "react";
 import EmailInput from "./components/emailInput/emailInput";
 import PasswordInput from "./components/passwordInput/passwordInput";
 import ConfirmPasswordInput from "./components/confirmPasswordInput/confirmPasswordInput";
-import { getTokenFromUrl, handleState, handleSubmit, verifyEmail } from "./utils/functionsAuth";
+import { handleState, handleSubmit } from "./utils/functionsAuth";
 import SwitchAuth from "./components/switchAuth/switchAuth";
 import Loader from "./components/loader/loader";
 import { Image } from 'expo-image';
 import { IndieFlower_400Regular, useFonts } from '@expo-google-fonts/indie-flower';
 import Monster from "./components/monster/monster";
 import colors from "tailwindcss/colors";
+import { useRouter } from "expo-router";
 
 export default function Auth() {
 	const [inputValue, setInputValue] = React.useState({
@@ -32,7 +33,8 @@ export default function Auth() {
 	const [fontsLoaded] = useFonts({
 		IndieFlower_400Regular,
 	});
-	const [token, setToken] = React.useState('');
+
+	const router = useRouter();
 
 	useEffect(() => {
 		const timer = setTimeout(() => {
@@ -40,13 +42,6 @@ export default function Auth() {
 		}, 3000);
 		return () => clearTimeout(timer);
 	}, []);
-
-	useEffect(() => {
-		getTokenFromUrl(setToken);
-		if (token) {
-			verifyEmail(token, setMessage);
-		}
-	}, [token]);
 
 	const canSubmit =
 		isLoginPage
@@ -109,7 +104,7 @@ export default function Auth() {
 					<Button
 						className={`w-fit self-end mt-4 ${!canSubmit ? "opacity-50" : ""}`}
 						size="sm"
-						onPress={() => handleSubmit(inputValue, isLoginPage, setIsInvalid, setMessage, setIsSending)}
+						onPress={() => handleSubmit(inputValue, isLoginPage, setIsInvalid, setMessage, setIsSending, router)}
 						disabled={!canSubmit || isSending}
 					>
 						{
