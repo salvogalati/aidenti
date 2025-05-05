@@ -34,9 +34,9 @@ def login():
     print(data)
     email = data.get('email')
     password = data.get('password')
-    check, message = check_credentials(email, password)
+    check, message, firstAccess = check_credentials(email, password)
     if check:
-        return jsonify({'message': message}), 200
+        return jsonify({'message': message, "firstAccess": firstAccess}), 200
     else:
         return jsonify({'message': message}), 401
 
@@ -51,7 +51,7 @@ def register():
 
     token = str(uuid.uuid4())
     add_user(email, password, token)
-    verification_link = f"http://localhost:8081?token={token}"
+    verification_link = f"http://localhost:8081/verify?token={token}"
     send_verification_email(email, verification_link)
     return jsonify({'message': 'User registered successfully \n Check your email to validate your account'}), 201
 

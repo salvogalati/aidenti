@@ -39,7 +39,7 @@ def check_credentials(email, password):
         return  False , "Invalid Password"
     if not user_row.iloc[0]['verified']:
         return  False , "Email not verified"
-    return True, "Login successful"
+    return True, "Login successful", bool(user_row.iloc[0]['first-access'])
 
 def add_user(email, password, token):
     df = load_users()
