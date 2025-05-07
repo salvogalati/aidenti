@@ -65,7 +65,7 @@ export default function Auth() {
 				</>
 			) : (
 				<VStack className="w-full max-w-[300px] rounded-md border border-background-200 p-4 relative">
-					<Monster classMonster={`absolute top-3 right-0 max-w-52 max-h-52 gap-2 ${hasErrors ? 'animate-hesitate' : 'animate-walk-and-flip'}`} />
+					<Monster classMonster={`absolute top-3 right-0 max-w-52 max-h-52 ${hasErrors ? 'animate-hesitate' : 'animate-walk-and-flip'}`} />
 					<Text style={{ fontFamily: 'IndieFlower_400Regular' }} className="text-[30px] mb-2 font-semibold">
 						{isLoginPage ? "Log in" : "Sign in"}
 					</Text>
@@ -102,7 +102,7 @@ export default function Auth() {
 					}
 
 					<Button
-						className={`w-fit self-end mt-4 ${!canSubmit ? "opacity-50" : ""}`}
+						className={`w-fit self-end mt-4 ${!canSubmit || isSending ? "opacity-50" : ""}`}
 						size="sm"
 						onPress={() => handleSubmit(inputValue, isLoginPage, setIsInvalid, setMessage, setIsSending, router)}
 						disabled={!canSubmit || isSending}
