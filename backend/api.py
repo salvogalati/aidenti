@@ -9,7 +9,7 @@ import base64
 app = Flask(__name__)
 
 CORS(app)
-AVATAR_FOLDER = "../Monsters Avatar"
+AVATAR_FOLDER = "./avatars"
 
 @app.route('/test_get', methods=['GET'])
 def test_get():
