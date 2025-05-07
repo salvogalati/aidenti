@@ -1,6 +1,5 @@
 import { Box } from "@/components/ui/box";
 import { VStack } from "@/components/ui/vstack";
-import { Text, View } from "react-native";
 import { IndieFlower_400Regular, useFonts } from '@expo-google-fonts/indie-flower';
 import { Button, ButtonGroup, ButtonIcon, ButtonText } from "@/components/ui/button";
 import { useState } from "react";
@@ -10,6 +9,7 @@ import Username from "./components/username/username";
 import Age from "./components/age/age";
 import Sex from "./components/sex/sex";
 import Monster from "./components/monster/monster";
+import Avatars from "./components/avatars/avatars";
 
 export default function FirstAccessPage() {
 	const [fontsLoaded] = useFonts({
@@ -29,7 +29,7 @@ export default function FirstAccessPage() {
 
 	return (
 		<VStack className="w-full h-full justify-center items-center">
-			<Box className="rounded-md border border-background-200 p-4 flex gap-1 relative">
+			<Box className="rounded-md border border-background-200 p-4 flex gap-1 relative max-w-[300px]">
 				<Monster classMonster={`absolute -top-24 left-0 max-w-52 max-h-52`} />
 				{
 					!avatarLayout ?
@@ -41,11 +41,7 @@ export default function FirstAccessPage() {
 							<Sex payload={payload} setPayload={setPayload} />
 						</>
 						:
-						<View>
-							<Text style={{ fontFamily: 'IndieFlower_400Regular' }} className="text-lg font-semibold">
-								Avatar
-							</Text>
-						</View>
+						<Avatars payload={payload} setPayload={setPayload} />
 				}
 				<HStack className="justify-end items-center gap-2 mt-4">
 					<ButtonGroup>
