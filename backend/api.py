@@ -3,10 +3,14 @@ from flask_cors import CORS
 from db import user_exists, check_credentials, add_user, verify_user_by_token
 from email_verification import send_verification_email
 import uuid
+import os
+import base64
 
 app = Flask(__name__)
 
 CORS(app)
+AVATAR_FOLDER = "../Monsters Avatar"
+
 @app.route('/test_get', methods=['GET'])
 def test_get():
     return jsonify("This is a Test GET API!"), 200
@@ -68,6 +72,26 @@ def verify_email():
         return jsonify({'status': 'error', 'message': message}), 404
     else:
         return jsonify({'status': 'success', 'message': message}), 200
+
+@app.route('/api/avatar_images', methods=['GET'])
+def get_images():
+    filenames = {
+        f.name: f for f in os.scandir(AVATAR_FOLDER)
+        if os.path.isfile(f.path) and f.name.lower().endswith('.png') and "Avatar" in f.name
+    }
+    avatars = []
+    for idx, filename in filenames.items():
+        path = os.path.join(AVATAR_FOLDER, filename)
+        with open(path, "rb") as img:
+            b64 = base64.b64encode(img.read()).decode('utf-8')
+        # Componi la data URI
+        data_uri = f"data:image/png;base64,{b64}"
+        avatars.append({
+            "id": idx,
+            "src": data_uri
+        })
+    return jsonify(avatars), 200
+
 
 if __name__ == '__main__':
     app.run(debug=True)
