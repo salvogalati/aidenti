@@ -1,11 +1,11 @@
 import pandas as pd
-import os
+import os, uuid
 
 CSV_FILE = 'users.csv'
 
 def load_users():
     if not os.path.exists(CSV_FILE):
-        df = pd.DataFrame(columns=['email', 'password', "verified", "token-verification", "first-access"])
+        df = pd.DataFrame(columns=['id', 'email', 'password', "verified", "token-verification", "first-access"])
         df.to_csv(CSV_FILE, index=False)
     return pd.read_csv(CSV_FILE)
 
@@ -39,10 +39,11 @@ def check_credentials(email, password):
         return  False , "Invalid Password"
     if not user_row.iloc[0]['verified']:
         return  False , "Email not verified"
-    return True, "Login successful", bool(user_row.iloc[0]['first-access'])
+    return True, "Login successful", user_row.iloc[0]
 
 def add_user(email, password, token):
     df = load_users()
-    new_user = pd.DataFrame([[email, password, False, token, False]], columns=['email', 'password', "verified", "token-verification", "first-access"])
+    new_id = str(uuid.uuid4())
+    new_user = pd.DataFrame([[new_id, email, password, False, token, False]], columns=['email', 'password', "verified", "token-verification", "first-access"])
     df = pd.concat([df, new_user], ignore_index=True)
     save_users(df)

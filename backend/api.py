@@ -38,9 +38,10 @@ def login():
     print(data)
     email = data.get('email')
     password = data.get('password')
-    check, message, firstAccess = check_credentials(email, password)
+    check, message, row = check_credentials(email, password)
+    
     if check:
-        return jsonify({'message': message, "firstAccess": firstAccess}), 200
+        return jsonify({'message': message, "id":row['id'], "firstAccess": bool(row['first-access'])}), 200
     else:
         return jsonify({'message': message}), 401
 
@@ -81,11 +82,7 @@ def get_images():
     }
     avatars = []
     for idx, filename in filenames.items():
-        path = os.path.join(AVATAR_FOLDER, filename)
-        with open(path, "rb") as img:
-            b64 = base64.b64encode(img.read()).decode('utf-8')
-        # Componi la data URI
-        data_uri = f"data:image/png;base64,{b64}"
+        data_uri = f"https://raw.githubusercontent.com/nmarmugi/nicola-salvatore/main/backend/avatars/{idx}" 
         avatars.append({
             "id": idx,
             "src": data_uri
