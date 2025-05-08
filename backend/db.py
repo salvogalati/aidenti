@@ -2,6 +2,7 @@ import pandas as pd
 import os, uuid
 
 CSV_FILE = 'users.csv'
+DASHBOARD_CSV = 'dashboard.csv'
 
 def load_users():
     if not os.path.exists(CSV_FILE):
@@ -47,3 +48,25 @@ def add_user(email, password, token):
     new_user = pd.DataFrame([[new_id, email, password, False, token, False]], columns=['email', 'password', "verified", "token-verification", "first-access"])
     df = pd.concat([df, new_user], ignore_index=True)
     save_users(df)
+
+
+def update_dashboard_db(data):
+    
+    # load or initialize dashboard CSV
+    if os.path.exists(DASHBOARD_CSV):
+        df = pd.read_csv(DASHBOARD_CSV)
+    else:
+        df = pd.DataFrame(columns=['id', 'username', 'date_of_birth', 'gender', 'avatar_id'])
+
+    # append new record
+    new_record = pd.DataFrame([{
+        'id':             data.get('id'),
+        'username':       data.get('username'),
+        'date_of_birth':  data.get('date_of_birth'),
+        'gender':         data.get('gender'),
+        'avatar_id':      data.get('avatar_id')
+    }])
+    df = pd.concat([df, new_record], ignore_index=True)
+
+    # save back to CSV
+    df.to_csv(DASHBOARD_CSV, index=False)
