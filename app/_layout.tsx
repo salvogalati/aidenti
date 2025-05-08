@@ -5,6 +5,7 @@ import 'react-native-reanimated';
 
 import '../global.css'
 import { GluestackUIProvider } from './components/ui/gluestack-ui-provider';
+import { View } from 'react-native';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -16,7 +17,9 @@ export default function RootLayout() {
 
   return (
     <GluestackUIProvider>
-      <Slot />
+      <View className='w-full h-full bg-white'>
+        <Slot />
+      </View>
     </GluestackUIProvider>
   );
 }

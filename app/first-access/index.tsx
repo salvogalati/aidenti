@@ -29,7 +29,7 @@ export default function FirstAccessPage() {
 
 	return (
 		<VStack className="w-full h-full justify-center items-center">
-			<Box className="rounded-md border border-background-200 p-4 flex gap-1 relative max-w-[300px]">
+			<Box className="rounded-md border border-background-200 p-4 flex gap-1 relative w-[300px]">
 				<Monster classMonster={`absolute -top-24 left-0 max-w-52 max-h-52`} />
 				{
 					!avatarLayout ?
