@@ -1,6 +1,7 @@
 export default interface IFirstAccess {
+    id: string;
     username: string;
-    age: string;
-    sex: string;
-    avatar: string;
+    date_of_birth: string;
+    gender: string;
+    avatar_id: string;
 }
