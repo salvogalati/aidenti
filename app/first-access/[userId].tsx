@@ -10,6 +10,7 @@ import Age from "./components/age/age";
 import Sex from "./components/sex/sex";
 import Monster from "./components/monster/monster";
 import Avatars from "./components/avatars/avatars";
+import { useLocalSearchParams } from 'expo-router';
 
 export default function FirstAccessPage() {
 	const [fontsLoaded] = useFonts({
@@ -17,6 +18,7 @@ export default function FirstAccessPage() {
 	});
 	const [payload, setPayload] = useState({ username: '', age: '', sex: '', avatar: '' });
 	const [avatarLayout, setAvatarLayout] = useState(false);
+	const { userId } = useLocalSearchParams();
 
 	const canSubmit =
 		(payload.username.length > 0 && payload.username.length <= 15) &&

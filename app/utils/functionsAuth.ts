@@ -24,9 +24,15 @@ const login = async (email: string, password: string, setMessage: React.Dispatch
 		setMessage(data.message)
 
 		if (!data.firstAccess) {
-			router.push('/first-access')
+			router.push({
+				pathname: '/first-access/[userId]',
+				params: { userId: data.id }
+			  });
 		} else {
-			router.push('/dashboard')
+			router.push({
+				pathname: '/dashboard/[userId]',
+				params: { userId: data.id }
+			  });
 		}
 	} catch (error) {
 		if (error instanceof Error) {
