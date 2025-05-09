@@ -5,30 +5,15 @@ import IUsername from "@/first-access/types/username";
 import { useEffect, useState } from "react";
 import Loader from "@/components/loader/loader";
 import { VStack } from "@/components/ui/vstack";
-
-interface IAvatar {
-	id: string;
-	src: string;
-}
+import { IAvatar } from "@/first-access/types/avatar";
+import { getAvatars } from "@/first-access/utils/functionsFirstAccess";
 
 export default function Avatars({ payload, setPayload }: IUsername) {
 	const [avatars, setAvatars] = useState<IAvatar[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
-		const getAvatars = async () => {
-			try {
-				setIsLoading(true);
-				const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/avatar_images`);
-				const data = await res.json();
-				setAvatars(data);
-			} catch (e) {
-				console.error(e);
-			} finally {
-				setIsLoading(false);
-			}
-		}
-		getAvatars();
+		getAvatars(setIsLoading, setAvatars);
 	}, [])
 
 	if (isLoading) return (
@@ -46,8 +31,8 @@ export default function Avatars({ payload, setPayload }: IUsername) {
 				{avatars.map((avatar) => (
 					<Pressable
 						key={avatar.id}
-						onPress={() => setPayload({ ...payload, avatar: avatar.id })}
-						className={`w-20 h-20 rounded-full overflow-hidden ${payload.avatar === avatar.id && 'border-2'}`}
+						onPress={() => setPayload({ ...payload, avatar_id: avatar.id })}
+						className={`w-20 h-20 rounded-full overflow-hidden ${payload.avatar_id === avatar.id && 'border-2'}`}
 					>
 						<Image style={{ width: '100%', height: '100%' }} source={{uri: avatar.src}} />
 					</Pressable>

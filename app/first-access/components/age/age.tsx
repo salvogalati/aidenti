@@ -17,17 +17,17 @@ export default function Age({ payload, setPayload }: IUsername) {
                     type="text"
                     placeholder="Age"
                     className="bg-white"
-                    value={payload.age}
+                    value={payload.date_of_birth}
                     onChangeText={(text: string) => {
                         if (!agePattern.test(text)) return;
                         setPayload((prev: IFirstAccess) => ({
                             ...prev,
-                            age: text,
+                            date_of_birth: text,
                         }))
                     }}
                 />
             </Input>
-            {payload.age !== '' && Number(payload.age) < 18 && (
+            {payload.date_of_birth !== '' && Number(payload.date_of_birth) < 18 && (
                 <Text className="text-red-500 text-[10px] mt-1">
                     Your age must be above 18 years
                 </Text>

@@ -12,11 +12,11 @@ export default function Sex({ payload, setPayload }: IUsername) {
             Sex
         </Text>
         <RadioGroup
-            value={payload.sex}
+            value={payload.gender}
             onChange={value =>
                 setPayload((prev: IFirstAccess) => ({
                     ...prev,
-                    sex: value
+                    gender: value
                 }))
             }
         >
