@@ -4,7 +4,7 @@ import uuid
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
-from . import db, email_verification
+import db, email_verification
 
 app = Flask(__name__)
 

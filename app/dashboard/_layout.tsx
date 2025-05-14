@@ -8,7 +8,7 @@ import { IUser } from './context/types/user';
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-    const [user, setUser] = useState<IUser | null>({ id: '345', name: 'Nicolaaa' });
+    const [user, setUser] = useState<IUser | null>(null);
 
     useEffect(() => {
         SplashScreen.hideAsync();
