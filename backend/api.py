@@ -1,16 +1,18 @@
 import os
 import uuid
 
+import db
+import email_verification
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-
-import db, email_verification
 
 app = Flask(__name__)
 
 CORS(app)
 AVATAR_FOLDER = "./avatars"
-AVATAR_URI = "https://raw.githubusercontent.com/nmarmugi/nicola-salvatore/main/backend/avatars/"
+AVATAR_URI = (
+    "https://raw.githubusercontent.com/nmarmugi/nicola-salvatore/main/backend/avatars/"
+)
 
 
 @app.route("/test_get", methods=["GET"])
@@ -148,6 +150,7 @@ def first_access():
     else:
         return jsonify({"message": "Failed to update dashboard database"}), 500
 
+
 @app.route("/api/get_userdata", methods=["POST"])
 def get_userdata():
     data = request.get_json()
@@ -159,9 +162,10 @@ def get_userdata():
 
     if not db.user_exists(field="id", value=user_id):
         return jsonify({"message": "User not found"}), 404
-    
+
     user_data, message = db.get_dashboard_user_data(user_id, keys)
     return jsonify({"message": message, "user_data": user_data}), 200
+
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,13 +1,15 @@
 import os
+import traceback
 import uuid
 
 import pandas as pd
-import traceback
 
 CSV_FILE = "users.csv"
 DASHBOARD_CSV = "dashboard.csv"
 AVATAR_FOLDER = "./avatars"
-AVATAR_URI = "https://raw.githubusercontent.com/nmarmugi/nicola-salvatore/main/backend/avatars/"
+AVATAR_URI = (
+    "https://raw.githubusercontent.com/nmarmugi/nicola-salvatore/main/backend/avatars/"
+)
 
 
 def load_users():
@@ -79,7 +81,14 @@ def add_user(email, password, token):
     new_id = str(uuid.uuid4())
     new_user = pd.DataFrame(
         [[new_id, email, password, False, token, False]],
-        columns=["id","email", "password", "verified", "token-verification", "first-access"],
+        columns=[
+            "id",
+            "email",
+            "password",
+            "verified",
+            "token-verification",
+            "first-access",
+        ],
     )
     df = pd.concat([df, new_user], ignore_index=True)
     save_users(df)
@@ -118,7 +127,8 @@ def update_dashboard_db(data):
         return True
     except Exception:
         return False
-    
+
+
 def get_dashboard_user_data(user_id, keys):
     message = "Success"
     df = pd.read_csv(DASHBOARD_CSV)
@@ -130,9 +140,7 @@ def get_dashboard_user_data(user_id, keys):
     if len(valid_keys) == 0:
         return False, "No requested keys found "
     user_row_dict = user_row[valid_keys].to_dict()
-    
 
     if "avatar_src" in keys:
         user_row_dict["avatar_src"] = f"{AVATAR_URI}{user_row['avatar_id']}"
     return user_row_dict, message
-    
