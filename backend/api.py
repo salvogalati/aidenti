@@ -10,6 +10,7 @@ app = Flask(__name__)
 
 CORS(app)
 AVATAR_FOLDER = "./avatars"
+AVATAR_URI = "https://raw.githubusercontent.com/nmarmugi/nicola-salvatore/main/backend/avatars/"
 
 
 @app.route("/test_get", methods=["GET"])
@@ -104,7 +105,7 @@ def get_images():
     }
     avatars = []
     for idx, filename in filenames.items():
-        data_uri = f"https://raw.githubusercontent.com/nmarmugi/nicola-salvatore/main/backend/avatars/{idx}"
+        data_uri = f"{AVATAR_URI}{idx}"
         avatars.append({"id": idx, "src": data_uri})
     return jsonify(avatars), 200
 
@@ -147,6 +148,20 @@ def first_access():
     else:
         return jsonify({"message": "Failed to update dashboard database"}), 500
 
+@app.route("/api/get_userdata", methods=["POST"])
+def get_userdata():
+    data = request.get_json()
+    user_id = data.get("id")
+    keys = data.get("keys", [])
+
+    if len(keys) == 0:
+        return jsonify({"message": "Please specify the keys"}), 404
+
+    if not db.user_exists(field="id", value=user_id):
+        return jsonify({"message": "User not found"}), 404
+    
+    user_data, message = db.get_dashboard_user_data(user_id, keys)
+    return jsonify({"message": message, "user_data": user_data}), 200
 
 if __name__ == "__main__":
     app.run(debug=True)

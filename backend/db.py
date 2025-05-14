@@ -6,6 +6,8 @@ import traceback
 
 CSV_FILE = "users.csv"
 DASHBOARD_CSV = "dashboard.csv"
+AVATAR_FOLDER = "./avatars"
+AVATAR_URI = "https://raw.githubusercontent.com/nmarmugi/nicola-salvatore/main/backend/avatars/"
 
 
 def load_users():
@@ -64,11 +66,11 @@ def check_credentials(email, password):
     df = load_users()
     user_row = df[df["email"] == email]
     if user_row.empty:
-        return False, "Invalid User"
+        return False, "Invalid User", user_row
     if user_row.iloc[0]["password"] != password:
-        return False, "Invalid Password"
+        return False, "Invalid Password", None
     if not user_row.iloc[0]["verified"]:
-        return False, "Email not verified"
+        return False, "Email not verified", None
     return True, "Login successful", user_row.iloc[0]
 
 
@@ -77,10 +79,11 @@ def add_user(email, password, token):
     new_id = str(uuid.uuid4())
     new_user = pd.DataFrame(
         [[new_id, email, password, False, token, False]],
-        columns=["email", "password", "verified", "token-verification", "first-access"],
+        columns=["id","email", "password", "verified", "token-verification", "first-access"],
     )
     df = pd.concat([df, new_user], ignore_index=True)
     save_users(df)
+    return True, "User correctly created"
 
 
 def update_dashboard_db(data):
@@ -115,3 +118,21 @@ def update_dashboard_db(data):
         return True
     except Exception:
         return False
+    
+def get_dashboard_user_data(user_id, keys):
+    message = "Success"
+    df = pd.read_csv(DASHBOARD_CSV)
+    user_row = df[df["id"] == user_id].iloc[0]
+    valid_keys = [k for k in keys if k in user_row.index]
+    unknown = set(keys) - set(valid_keys)
+    if len(unknown) > 0:
+        message += "fKeys not found and ignored: {unknown}"
+    if len(valid_keys) == 0:
+        return False, "No requested keys found "
+    user_row_dict = user_row[valid_keys].to_dict()
+    
+
+    if "avatar_src" in keys:
+        user_row_dict["avatar_src"] = f"{AVATAR_URI}{user_row['avatar_id']}"
+    return user_row_dict, message
+    

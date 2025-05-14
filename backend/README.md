@@ -77,7 +77,6 @@ Replace localhost/5000 if you host/port is different
 ```bash
 npx expo start -c
 ```
-s
+
 ---
 
-With these steps, your Flask backend should be up and running and accessible for development and testing.
