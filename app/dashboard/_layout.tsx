@@ -1,7 +1,6 @@
 import { Slot } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
-import 'react-native-reanimated';
 import { View } from 'react-native';
 import { UserContext } from './context/UserContext';
 import { IUser } from './context/types/user';
