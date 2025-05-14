@@ -1,9 +1,10 @@
 import smtplib
+import traceback
 from email.header import Header
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formataddr
-import traceback
+
 
 def send_verification_email(to_email: str, verification_link: str):
     try:
@@ -97,7 +98,10 @@ def send_verification_email(to_email: str, verification_link: str):
             server.login(sender_email, sender_password)
             server.sendmail(sender_email, to_email, message.as_string())
 
-        return True, "User registered successfully \n Check your email to validate your account"
+        return (
+            True,
+            "User registered successfully \n Check your email to validate your account",
+        )
 
     except Exception:
         traceback.print_exc()
