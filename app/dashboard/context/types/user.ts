@@ -1,6 +1,7 @@
 export interface IUser {
   id: string;
-  name: string;
+  username: string;
+  avatar_src: string;
 }
 
 export interface IUserContext {
