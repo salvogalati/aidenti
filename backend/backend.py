@@ -1,17 +1,17 @@
 import os
 
-from flask import Flask, jsonify, request, render_template
-from flask_cors import CORS
-from routes.login_signin import login_signin_bp
-from routes.dashboard import dashboard_bp
-
 from config import AVATAR_FOLDER, AVATAR_URI
+from flask import Flask, jsonify, render_template, request
+from flask_cors import CORS
+from routes.dashboard import dashboard_bp
+from routes.login_signin import login_signin_bp
 
 app = Flask(__name__)
 app.register_blueprint(login_signin_bp)
 app.register_blueprint(dashboard_bp)
 
 CORS(app)
+
 
 @app.route("/test_get", methods=["GET"])
 def test_get():
@@ -50,6 +50,7 @@ def get_images():
         data_uri = f"{AVATAR_URI}{idx}"
         avatars.append({"id": idx, "src": data_uri})
     return jsonify(avatars), 200
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)

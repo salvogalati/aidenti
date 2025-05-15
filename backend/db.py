@@ -4,7 +4,6 @@ import uuid
 from datetime import datetime
 
 import pandas as pd
-
 from config import AVATAR_URI, CSV_FILE, DASHBOARD_CSV
 
 

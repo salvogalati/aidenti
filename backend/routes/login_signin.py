@@ -1,15 +1,15 @@
 import sys
 from pathlib import Path
-import email_verification
+
+from utils import email_verification
 
 sys.path.append(str(Path(__file__).parent.parent))
 
 import uuid
 
 import db
-from flask import Blueprint, jsonify, request, render_template
-
 from config import BACKEND_URL
+from flask import Blueprint, jsonify, render_template, request
 
 login_signin_bp = Blueprint("login_signin", __name__)
 
@@ -110,9 +110,10 @@ def first_access():
     else:
         return jsonify({"message": "Failed to update dashboard database"}), 500
 
+
 @login_signin_bp.route("/verify-email")
 def verify_email():
-    email_token = request.args.get('token', None)
+    email_token = request.args.get("token", None)
     if not email_token:
         message = "Missing token"
     else:
