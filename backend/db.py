@@ -1,15 +1,11 @@
 import os
 import traceback
 import uuid
+from datetime import datetime
 
 import pandas as pd
 
-CSV_FILE = "users.csv"
-DASHBOARD_CSV = "dashboard.csv"
-AVATAR_FOLDER = "./avatars"
-AVATAR_URI = (
-    "https://raw.githubusercontent.com/nmarmugi/nicola-salvatore/main/backend/avatars/"
-)
+from config import AVATAR_URI, CSV_FILE, DASHBOARD_CSV
 
 
 def load_users():
@@ -22,6 +18,7 @@ def load_users():
                 "verified",
                 "token-verification",
                 "first-access",
+                "registration-date",
             ]
         )
         df.to_csv(CSV_FILE, index=False)
@@ -79,8 +76,9 @@ def check_credentials(email, password):
 def add_user(email, password, token):
     df = load_users()
     new_id = str(uuid.uuid4())
+    registration_date = datetime.now().isoformat()
     new_user = pd.DataFrame(
-        [[new_id, email, password, False, token, False]],
+        [[new_id, email, password, False, token, False, registration_date]],
         columns=[
             "id",
             "email",
@@ -88,6 +86,7 @@ def add_user(email, password, token):
             "verified",
             "token-verification",
             "first-access",
+            "registration-date",
         ],
     )
     df = pd.concat([df, new_user], ignore_index=True)

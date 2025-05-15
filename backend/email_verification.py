@@ -51,11 +51,12 @@ def send_verification_email(to_email: str, verification_link: str):
                 text-align: center;
             }}
             .button {{
+                text-decoration: none !important;
+                color: white !important;
                 display: inline-block;
                 padding: 12px 24px;
                 margin-top: 20px;
                 font-size: 16px;
-                color: #ffffff;
                 background-color: #007bff;
                 text-decoration: none;
                 border-radius: 4px;
