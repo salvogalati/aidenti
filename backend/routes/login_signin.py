@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 
-from utils import email_verification
+from utils import send_email
 
 sys.path.append(str(Path(__file__).parent.parent))
 
@@ -50,7 +50,7 @@ def register():
     if not result:
         return jsonify({"message": message}), 400
     verification_link = f"{BACKEND_URL}/verify-email?token={token}"
-    res, message = email_verification.send_verification_email(email, verification_link)
+    res, message = send_email.send_verification_email(email, verification_link)
     if res:
         return jsonify({"message": message}), 201
     else:
@@ -120,3 +120,12 @@ def verify_email():
         result, message = db.verify_user_by_token(email_token)
 
     return render_template("verify_email.html", message=message)
+
+
+@login_signin_bp.route('/forgot-password')
+def forgot_password():
+    data = request.get_json()
+    email = data.get('email')
+    ok, msg = db.enerate_and_save_reset_token(email)
+    status = 200 if ok else 404
+    return jsonify(message=msg), status

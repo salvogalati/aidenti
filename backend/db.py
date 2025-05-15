@@ -1,8 +1,8 @@
 import os
 import traceback
 import uuid
-from datetime import datetime
-
+from datetime import datetime, timedelta
+import secrets
 import pandas as pd
 from config import AVATAR_URI, CSV_FILE, DASHBOARD_CSV
 
@@ -18,6 +18,8 @@ def load_users():
                 "token-verification",
                 "first-access",
                 "registration-date",
+                "reset_token",
+                "reset_token_expiry",
             ]
         )
         df.to_csv(CSV_FILE, index=False)
@@ -77,7 +79,7 @@ def add_user(email, password, token):
     new_id = str(uuid.uuid4())
     registration_date = datetime.now().isoformat()
     new_user = pd.DataFrame(
-        [[new_id, email, password, False, token, False, registration_date]],
+        [[new_id, email, password, False, token, False, registration_date, None, None]],
         columns=[
             "id",
             "email",
@@ -86,12 +88,41 @@ def add_user(email, password, token):
             "token-verification",
             "first-access",
             "registration-date",
+            "reset_token",
+            "reset_token_expiry",
         ],
     )
     df = pd.concat([df, new_user], ignore_index=True)
     save_users(df)
     return True, "User correctly created"
 
+
+def generate_and_save_reset_token(email):
+    df = load_users()
+    user = df[df["email"] == email]
+    if user.empty:
+        return False, "Email non registrata"
+    token = secrets.token_urlsafe(32)
+    expiry = (datetime.utcnow() + timedelta(minutes=15)).isoformat()
+    df.loc[df["email"] == email, "reset_token"] = token
+    df.loc[df["email"] == email, "reset_token_expiry"] = expiry
+    save_users(df)
+    return True, "Email di reset inviata"
+
+
+def reset_password_with_token(token, new_password):
+    df = load_users()
+    user = df[df["reset_token"] == token]
+    if user.empty:
+        return False, "Token non valido"
+    expiry = datetime.fromisoformat(user.iloc[0]["reset_token_expiry"])
+    if datetime.now(datetime.timezone.utc > expiry):
+        return False, "Token scaduto"
+    df.loc[df["reset_token"] == token, "password"] = new_password
+    df.loc[df["reset_token"] == token, "reset_token"] = ""
+    df.loc[df["reset_token_expiry"] == token, "reset_token_expiry"] = ""
+    save_users(df)
+    return True, "Password aggiornata con successo"
 
 def update_dashboard_db(data):
     try:
