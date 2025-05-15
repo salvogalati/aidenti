@@ -27,12 +27,12 @@ const login = async (email: string, password: string, setMessage: React.Dispatch
 			router.push({
 				pathname: '/first-access/[userId]',
 				params: { userId: data.id }
-			  });
+			});
 		} else {
 			router.push({
 				pathname: '/dashboard/[userId]',
 				params: { userId: data.id }
-			  });
+			});
 		}
 	} catch (error) {
 		if (error instanceof Error) {
@@ -92,6 +92,11 @@ export const handleSubmit = (inputValue: IInputValue, isLoginPage: boolean, setI
 			password: !passwordValid,
 			confirmPassword: false,
 		});
+
+		if (!emailValid || !passwordValid) {
+			return;
+		}
+
 		login(inputValue.email, inputValue.password, setMessage, setIsSending, router);
 	} else {
 		const passwordsMatch =
@@ -102,6 +107,11 @@ export const handleSubmit = (inputValue: IInputValue, isLoginPage: boolean, setI
 			password: !passwordValid,
 			confirmPassword: !passwordsMatch,
 		});
+
+		if (!emailValid || !passwordValid || !passwordsMatch) {
+			return;
+		}
+
 		signin(inputValue.email, inputValue.confirmPassword, setMessage, setIsSending)
 	}
 };
