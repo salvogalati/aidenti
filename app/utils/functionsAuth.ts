@@ -1,6 +1,5 @@
 import { IInputValue, IIsInvalid } from "@/types/emailInput";
 import React, { SetStateAction } from "react";
-import { Linking } from "react-native";
 import { Router } from "expo-router";
 
 const login = async (email: string, password: string, setMessage: React.Dispatch<SetStateAction<string>>, setIsSending: React.Dispatch<SetStateAction<boolean>>, router: Router) => {

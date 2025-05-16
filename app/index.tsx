@@ -12,7 +12,7 @@ import { Image } from 'expo-image';
 import { IndieFlower_400Regular, useFonts } from '@expo-google-fonts/indie-flower';
 import Monster from "./components/monster/monster";
 import colors from "tailwindcss/colors";
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 
 export default function Auth() {
 	const [inputValue, setInputValue] = React.useState({
@@ -97,6 +97,13 @@ export default function Auth() {
 								handleState={() => handleState(setShowPassword)}
 							/>
 						)}
+
+						{
+							isLoginPage &&
+							<Link href="/forgot-password" className="underline">
+								Forgot password?
+							</Link>
+						}
 
 						{
 							message &&
