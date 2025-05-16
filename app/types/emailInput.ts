@@ -15,5 +15,5 @@ export interface IInputValue {
 export interface IEmailInput {
 	isInvalid: IIsInvalid;
 	inputValue: IInputValue;
-	setInputValue: React.Dispatch<SetStateAction<IInputValue>>
+	setInputValue: React.Dispatch<SetStateAction<IInputValue>>;
 }
