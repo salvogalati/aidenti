@@ -1,10 +1,12 @@
 import os
+import secrets
 import traceback
 import uuid
 from datetime import datetime, timedelta
-import secrets
+
 import pandas as pd
-from config import AVATAR_URI, CSV_FILE, DASHBOARD_CSV
+from config import AVATAR_URI, BACKEND_URL, CSV_FILE, DASHBOARD_CSV
+from utils import send_email
 
 
 def load_users():
@@ -101,28 +103,49 @@ def generate_and_save_reset_token(email):
     df = load_users()
     user = df[df["email"] == email]
     if user.empty:
-        return False, "Email non registrata"
+        return False, "Email not found"
+    if not pd.isna(user.iloc[0]["reset_token"]):
+        expiry = datetime.fromisoformat(user.iloc[0]["reset_token_expiry"])
+        if datetime.now() < expiry:
+            return (
+                False,
+                "You have already request for a token. Such token is valid for 15 minutes",
+            )
     token = secrets.token_urlsafe(32)
-    expiry = (datetime.utcnow() + timedelta(minutes=15)).isoformat()
+    expiry = (datetime.now() + timedelta(minutes=15)).isoformat()
     df.loc[df["email"] == email, "reset_token"] = token
     df.loc[df["email"] == email, "reset_token_expiry"] = expiry
     save_users(df)
-    return True, "Email di reset inviata"
+    reset_link = f"{BACKEND_URL}/reset-password?token={token}"
+    res, message = send_email.send_reset_password_email(
+        to_email=email, reset_link=reset_link
+    )
+    return res, message
 
 
 def reset_password_with_token(token, new_password):
+    res, message = check_expiration_token(token)
+    if not res:
+        return res, message
+    df = load_users()
+    df.loc[df["reset_token"] == token, "password"] = new_password
+    df.loc[df["reset_token"] == token, "reset_token_expiry"] = ""
+    df.loc[df["reset_token"] == token, "reset_token"] = ""
+    save_users(df)
+    return True, "Password successfully updated"
+
+
+def check_expiration_token(token):
     df = load_users()
     user = df[df["reset_token"] == token]
     if user.empty:
         return False, "Token non valido"
     expiry = datetime.fromisoformat(user.iloc[0]["reset_token_expiry"])
-    if datetime.now(datetime.timezone.utc > expiry):
-        return False, "Token scaduto"
-    df.loc[df["reset_token"] == token, "password"] = new_password
-    df.loc[df["reset_token"] == token, "reset_token"] = ""
-    df.loc[df["reset_token_expiry"] == token, "reset_token_expiry"] = ""
-    save_users(df)
-    return True, "Password aggiornata con successo"
+    if datetime.now() > expiry:
+        return False, "Link expired"
+
+    return True, "OK"
+
 
 def update_dashboard_db(data):
     try:

@@ -122,10 +122,32 @@ def verify_email():
     return render_template("verify_email.html", message=message)
 
 
-@login_signin_bp.route('/forgot-password')
+@login_signin_bp.route("/forgot-password", methods=["POST"])
 def forgot_password():
     data = request.get_json()
-    email = data.get('email')
-    ok, msg = db.enerate_and_save_reset_token(email)
+    email = data.get("email")
+    ok, msg = db.generate_and_save_reset_token(email)
     status = 200 if ok else 404
+    return jsonify(message=msg), status
+
+
+@login_signin_bp.route("/reset-password")
+def reset_password_route():
+    token = request.args.get("token", None)
+    valid, message = db.check_expiration_token(token)
+    print(valid, message)
+    return render_template(
+        "reset_password.html",
+        backend_url=BACKEND_URL,
+        expired=not valid,
+    )
+
+
+@login_signin_bp.route("/reset-password-change", methods=["PATCH"])
+def reset_password_change_route():
+    data = request.get_json()
+    token = data.get("token")
+    new_pw = data.get("password")
+    ok, msg = db.reset_password_with_token(token, new_pw)
+    status = 200 if ok else 400
     return jsonify(message=msg), status
