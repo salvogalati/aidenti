@@ -6,10 +6,12 @@ from utils import send_email
 sys.path.append(str(Path(__file__).parent.parent))
 
 import uuid
+from datetime import datetime, timedelta
 
 import db
-from config import BACKEND_URL
+from config import ACCESS_TOKEN_VALIDITY_MINUTES, BACKEND_URL, CSV_FILE
 from flask import Blueprint, jsonify, render_template, request
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 
 login_signin_bp = Blueprint("login_signin", __name__)
 
@@ -19,21 +21,34 @@ def login():
     data = request.get_json()
     email = data.get("email")
     password = data.get("password")
-    check, message, row = db.check_credentials(email, password)
+    check, message, user_row = db.check_credentials(email, password)
 
     if check:
+        access_token = create_access_token(
+            identity=user_row["id"],
+            expires_delta=timedelta(minutes=ACCESS_TOKEN_VALIDITY_MINUTES),
+        )
+        refresh, refresh_expiry = db.creating_refresh_token(user_row["id"])
         return (
             jsonify(
                 {
                     "message": message,
-                    "id": row["id"],
-                    "firstAccess": bool(row["first-access"]),
+                    "id": user_row["id"],
+                    "firstAccess": bool(user_row["first-access"]),
+                    "access_token": access_token,
                 }
             ),
             200,
         )
     else:
-        return jsonify({"message": message}), 401
+        return (
+            jsonify(
+                {
+                    "message": message,
+                }
+            ),
+            401,
+        )
 
 
 @login_signin_bp.route("/register", methods=["POST"])
@@ -57,22 +72,43 @@ def register():
         return jsonify({"message": message}), 400
 
 
-# @login_signin_bp.route("/verify", methods=["PATCH"])
-# def verify_email():
-#     data = request.get_json()
-#     token = data.get("token")
-#     if not token:
-#         return jsonify({"status": "error", "message": "Missing token"}), 400
+@login_signin_bp.route("/refresh_token", methods=["POST"])
+def refresh_token():
+    req = request.get_json()
+    rt = req.get("refresh_token", "")
 
-#     result, message = db.verify_user_by_token(token)
+    df = db.load_users()
+    user = df[df["refresh_token"] == rt]
+    if user.empty:
+        return jsonify(msg="Refresh token not valid"), 401
 
-#     if not result:
-#         return jsonify({"status": "error", "message": message}), 404
-#     else:
-#         return jsonify({"status": "success", "message": message}), 200
+    expiry = datetime.fromisoformat(user.iloc[0]["refresh_token_expiry"])
+    if datetime.now() > expiry:
+        return jsonify(msg="Refresh token expired"), 401
+
+    user_id = user.iloc[0]["id"]
+    new_access = create_access_token(
+        identity=user_id, expires_delta=timedelta(minutes=10)
+    )
+
+    # —— Opzionale: rotation del refresh token ——
+    # db.creating_refresh_token(user_row["id"])
+
+    return jsonify(access_token=new_access), 200
+
+
+@login_signin_bp.route("/logout", methods=["POST"])
+@jwt_required()
+def logout():
+    user_id = get_jwt_identity()
+    # svuota il refresh token in CSV
+    db.change_cell(user_id, CSV_FILE, "refresh_token", "")
+    db.change_cell(user_id, CSV_FILE, "refresh_token_expiry", "")
+    return jsonify(msg="Logout effettuato"), 200
 
 
 @login_signin_bp.route("/api/first-access", methods=["POST"])
+@jwt_required()
 def first_access():
     data = request.get_json()
     user_id = data.get("id")

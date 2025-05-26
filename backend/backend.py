@@ -1,15 +1,18 @@
 import os
 
-from config import AVATAR_FOLDER, AVATAR_URI
+from config import AVATAR_FOLDER, AVATAR_URI, JWT_SECRET_KEY
 from flask import Flask, jsonify, render_template, request
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager, jwt_required
 from routes.dashboard import dashboard_bp
 from routes.login_signin import login_signin_bp
 
 app = Flask(__name__)
+app.config["JWT_SECRET_KEY"] = JWT_SECRET_KEY
 app.register_blueprint(login_signin_bp)
 app.register_blueprint(dashboard_bp)
 
+JWTManager(app)
 CORS(app)
 
 
@@ -37,6 +40,7 @@ def index():
 
 
 @app.route("/api/avatar_images", methods=["GET"])
+@jwt_required()
 def get_images():
     filenames = {
         f.name: f

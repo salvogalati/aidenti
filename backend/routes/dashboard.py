@@ -5,11 +5,13 @@ sys.path.append(str(Path(__file__).parent.parent))
 
 import db
 from flask import Blueprint, jsonify, request
+from flask_jwt_extended import jwt_required
 
 dashboard_bp = Blueprint("dashboard", __name__)
 
 
 @dashboard_bp.route("/api/get_userdata", methods=["POST"])
+@jwt_required()
 def get_userdata():
     data = request.get_json()
     user_id = data.get("id")
