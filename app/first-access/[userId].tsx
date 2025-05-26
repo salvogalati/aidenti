@@ -14,6 +14,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { firstAccess } from "./utils/functionsFirstAccess";
 import { Text } from "react-native";
 import colors from "tailwindcss/colors";
+import { checkToken } from "@/utils/functionsAuth";
 
 export default function FirstAccessPage() {
 	const [fontsLoaded] = useFonts({
@@ -25,6 +26,17 @@ export default function FirstAccessPage() {
 	const router = useRouter();
 	const [errorMessage, setErrorMessage] = useState('');
 	const [isSending, setIsSending] = useState(false);
+	const [isMounted, setIsMounted] = useState(false);
+
+	useEffect(() => {
+		setIsMounted(true);
+	}, [])
+
+	useEffect(() => {
+		if (!isMounted) return;
+
+		checkToken(router);
+	}, [isMounted])
 
 	const canSubmit =
 		(payload.username.length > 0 && payload.username.length <= 15) &&
@@ -59,7 +71,7 @@ export default function FirstAccessPage() {
 				}
 				{
 					errorMessage &&
-						<Text className="text-end">{errorMessage}</Text>
+					<Text className="text-end">{errorMessage}</Text>
 				}
 				<HStack className="justify-end items-center gap-2 mt-4">
 					<ButtonGroup>
@@ -94,7 +106,7 @@ export default function FirstAccessPage() {
 							>
 								{
 									isSending &&
-										<ButtonSpinner color={colors.gray[400]} />
+									<ButtonSpinner color={colors.gray[400]} />
 								}
 								<ButtonText>
 									Send

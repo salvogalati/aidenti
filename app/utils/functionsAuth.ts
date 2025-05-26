@@ -1,6 +1,32 @@
 import { IInputValue, IIsInvalid } from "@/types/emailInput";
 import React, { SetStateAction } from "react";
 import { Router } from "expo-router";
+import { Platform } from "react-native";
+import * as SecureStore from 'expo-secure-store';
+
+export const checkToken = async (router: Router) => {
+	if (Platform.OS === 'web') {
+		try {
+			const token = localStorage.getItem('access_token');
+			if (!token) {
+				router.replace('/');
+			}
+		} catch (e) {
+			console.error(e);
+			router.replace('/');
+		}
+	} else {
+		try {
+			const token = await SecureStore.getItemAsync('access_token');
+			if (!token) {
+				router.replace('/');
+			}
+		} catch (e) {
+			console.error(e);
+			router.replace('/');
+		}
+	}
+};
 
 const login = async (email: string, password: string, setMessage: React.Dispatch<SetStateAction<string>>, setIsSending: React.Dispatch<SetStateAction<boolean>>, router: Router) => {
 	try {
@@ -21,6 +47,24 @@ const login = async (email: string, password: string, setMessage: React.Dispatch
 		}
 
 		setMessage(data.message)
+
+		if (Platform.OS === 'web') {
+			try {
+				if (data.access_token === null) {
+					localStorage.removeItem('access_token');
+				} else {
+					localStorage.setItem('access_token', data.access_token);
+				}
+			} catch (e) {
+				console.error('Local storage is unavailable:', e);
+			}
+		} else {
+			if (data.access_token == null) {
+				await SecureStore.deleteItemAsync('access_token');
+			} else {
+				await SecureStore.setItemAsync('access_token', data.access_token);
+			}
+		}
 
 		if (!data.firstAccess) {
 			router.push({
