@@ -5,7 +5,13 @@ import uuid
 from datetime import datetime, timedelta
 
 import pandas as pd
-from config import AVATAR_URI, BACKEND_URL, CSV_FILE, DASHBOARD_CSV
+from config import (
+    AVATAR_URI,
+    BACKEND_URL,
+    CSV_FILE,
+    DASHBOARD_CSV,
+    REFRESH_TOKEN_VALIDITY_DAYS,
+)
 from utils import send_email
 
 
@@ -22,6 +28,8 @@ def load_users():
                 "registration-date",
                 "reset_token",
                 "reset_token_expiry",
+                "refresh_token",
+                "refresh_token_expiry",
             ]
         )
         df.to_csv(CSV_FILE, index=False)
@@ -92,6 +100,8 @@ def add_user(email, password, token):
             "registration-date",
             "reset_token",
             "reset_token_expiry",
+            "refresh_token",
+            "refresh_token_expiry",
         ],
     )
     df = pd.concat([df, new_user], ignore_index=True)
@@ -133,6 +143,18 @@ def reset_password_with_token(token, new_password):
     df.loc[df["reset_token"] == token, "reset_token"] = ""
     save_users(df)
     return True, "Password successfully updated"
+
+
+def creating_refresh_token(user_id, save=True):
+
+    refresh = secrets.token_urlsafe(32)
+    refresh_expiry = (
+        datetime.now() + timedelta(days=REFRESH_TOKEN_VALIDITY_DAYS)
+    ).isoformat()
+
+    change_cell(user_id, CSV_FILE, "refresh_token", refresh)
+    change_cell(user_id, CSV_FILE, "refresh_token_expiry", refresh_expiry)
+    return refresh, refresh_expiry
 
 
 def check_expiration_token(token):
