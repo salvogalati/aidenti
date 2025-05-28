@@ -4,33 +4,130 @@ import { Router } from "expo-router";
 import { Platform } from "react-native";
 import * as SecureStore from 'expo-secure-store';
 
-export const checkToken = async (router: Router) => {
+const getToken = async (key: string) => {
 	if (Platform.OS === 'web') {
-		try {
-			const token = localStorage.getItem('access_token');
-			if (!token) {
-				router.replace('/');
-			}
-		} catch (e) {
-			console.error(e);
+		return localStorage.getItem(key);
+	} else {
+		return await SecureStore.getItemAsync(key);
+	}
+};
+
+const setToken = async (key: string, value: string) => {
+	if (Platform.OS === 'web') {
+		localStorage.setItem(key, value);
+	} else {
+		await SecureStore.setItemAsync(key, value);
+	}
+};
+
+export const removeToken = async (key: string) => {
+	if (Platform.OS === 'web') {
+		localStorage.removeItem(key);
+	} else {
+		await SecureStore.deleteItemAsync(key);
+	}
+};
+
+export const checkSession = async (router: Router) => {
+	try {
+		const token = await getToken('access_token');
+
+		if (!token) {
+			throw new Error('Token doesn\'t exist');
+		}
+
+		const res = await fetchWithAuth('/fast_login', { method: 'GET' }, router);
+
+		if (!res.ok) {
+			throw new Error(`Error to fetch datas`);
+		}
+
+		const data = await res.json();
+
+		if (!data.firstAccess) {
+			router.push({
+				pathname: '/first-access/[userId]',
+				params: { userId: data.id },
+			});
+		} else {
+			router.push({
+				pathname: '/dashboard/[userId]',
+				params: { userId: data.id },
+			});
+		}
+	} catch (e) {
+		console.error(e);
+	}
+}
+
+export const checkToken = async (router: Router) => {
+	try {
+		const token = await getToken('access_token');
+		if (!token) {
 			router.replace('/');
 		}
-	} else {
-		try {
-			const token = await SecureStore.getItemAsync('access_token');
-			if (!token) {
-				router.replace('/');
+	} catch (e) {
+		console.error(e);
+		router.replace('/');
+	}
+};
+
+export const fetchWithAuth = async (url: string, options: RequestInit = {}, router: Router) => {
+	let accessToken = await getToken('access_token');
+	let refreshToken = await getToken('refresh_token');
+
+	const headers = {
+		...(options.headers || {}),
+		Authorization: `Bearer ${accessToken}`,
+		'Content-Type': 'application/json',
+	};
+
+	let response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}${url}`, {
+		...options,
+		headers,
+	});
+
+	if (response.status === 401 && refreshToken) {
+		const refreshRes = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/refresh_token`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ refresh_token: refreshToken }),
+		});
+
+		if (refreshRes.ok) {
+			const data = await refreshRes.json();
+
+			accessToken = data.access_token;
+			refreshToken = data.refresh_token;
+
+			if (accessToken) {
+				await setToken('access_token', accessToken);
 			}
-		} catch (e) {
-			console.error(e);
+			if (refreshToken) {
+				await setToken('refresh_token', refreshToken);
+			}
+
+			const retryHeaders = {
+				...headers,
+				Authorization: `Bearer ${accessToken}`,
+			};
+
+			response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}${url}`, {
+				...options,
+				headers: retryHeaders,
+			});
+		} else {
+			await removeToken('access_token');
+			await removeToken('refresh_token');
 			router.replace('/');
 		}
 	}
+
+	return response;
 };
 
 const login = async (email: string, password: string, setMessage: React.Dispatch<SetStateAction<string>>, setIsSending: React.Dispatch<SetStateAction<boolean>>, router: Router) => {
 	try {
-
 		setIsSending(true);
 		const loginData = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/login`, {
 			headers: {
@@ -46,7 +143,7 @@ const login = async (email: string, password: string, setMessage: React.Dispatch
 			throw new Error(data.message || 'Login failed');
 		}
 
-		setMessage(data.message)
+		setMessage(data.message);
 
 		if (Platform.OS === 'web') {
 			try {
@@ -54,6 +151,12 @@ const login = async (email: string, password: string, setMessage: React.Dispatch
 					localStorage.removeItem('access_token');
 				} else {
 					localStorage.setItem('access_token', data.access_token);
+				}
+
+				if (data.refresh_token === null) {
+					localStorage.removeItem('refresh_token');
+				} else {
+					localStorage.setItem('refresh_token', data.refresh_token);
 				}
 			} catch (e) {
 				console.error('Local storage is unavailable:', e);
@@ -64,30 +167,36 @@ const login = async (email: string, password: string, setMessage: React.Dispatch
 			} else {
 				await SecureStore.setItemAsync('access_token', data.access_token);
 			}
+
+			if (data.refresh_token == null) {
+				await SecureStore.deleteItemAsync('refresh_token');
+			} else {
+				await SecureStore.setItemAsync('refresh_token', data.refresh_token);
+			}
 		}
 
 		if (!data.firstAccess) {
 			router.push({
 				pathname: '/first-access/[userId]',
-				params: { userId: data.id }
+				params: { userId: data.id },
 			});
 		} else {
 			router.push({
 				pathname: '/dashboard/[userId]',
-				params: { userId: data.id }
+				params: { userId: data.id },
 			});
 		}
 	} catch (error) {
 		if (error instanceof Error) {
 			console.error('Error during login:', error.message);
-			setMessage(error.message)
+			setMessage(error.message);
 		} else {
 			console.error('Unknown error during login:', error);
 		}
 	} finally {
 		setIsSending(false);
 	}
-}
+};
 
 const signin = async (email: string, password: string, setMessage: React.Dispatch<SetStateAction<string>>, setIsSending: React.Dispatch<SetStateAction<boolean>>) => {
 	try {

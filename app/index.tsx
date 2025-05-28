@@ -5,7 +5,7 @@ import React, { useEffect } from "react";
 import EmailInput from "./components/emailInput/emailInput";
 import PasswordInput from "./components/passwordInput/passwordInput";
 import ConfirmPasswordInput from "./components/confirmPasswordInput/confirmPasswordInput";
-import { handleState, handleSubmit } from "./utils/functionsAuth";
+import { checkSession, handleState, handleSubmit } from "./utils/functionsAuth";
 import SwitchAuth from "./components/switchAuth/switchAuth";
 import Loader from "./components/loader/loader";
 import { Image } from 'expo-image';
@@ -37,6 +37,7 @@ export default function Auth() {
 	const router = useRouter();
 
 	useEffect(() => {
+		checkSession(router);
 		const timer = setTimeout(() => {
 			setLoading(false);
 		}, 3000);
