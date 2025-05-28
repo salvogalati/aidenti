@@ -1,4 +1,3 @@
-id,email,password,verified,token-verification,first-access,registration-date,reset_token,reset_token_expiry,reset_token.1,reset_token_expiry.1,refresh_token,refresh_token_expiry
-88083920-155c-4148-b321-6eaae8f9e249,culo@gmail.com,culo123,True,e44fcdf6-ec61-4d69-8614-9dd23f67d700,True,2025-04-15T14:14:14,,,,,,
-b81c2d42-513d-406f-9158-d340d97a1867,nicolamarmugi1@gmail.com,ciaone,True,38b92312-5faf-45e8-8949-d6f71b6a06ea,True,2025-04-15T14:14:14,,,,,,
-3f8b02a6-0bf4-4d8d-b74f-78afcf22ad9f,nicola@culo.com,Ciaooooo,True,36a35abf-86e2-479a-acee-178f7e71d996,False,2025-04-15T14:14:14,,,,,j1PO1bOWCPgMBlB_B0HamLvsLw5fvU90Ow4ZhDPW2sg,2025-06-20T17:53:55.233379
+id,email,password,verified,token-verification,first-access,registration-date,refresh_token,refresh_token_expiry
+30916a4e-ffe9-40cd-a8f7-b03dde735fd6,nicolamarmugi1@gmail.com,123456,True,88fa919a-0991-4b97-b4b4-880b37a0afd6,True,2025-05-28T22:47:13.896319,,
+5ae4f7c3-f205-4cd9-b63e-2ed9b6774e00,culo@gmail.com,culo123,True,794f6f0e-98e5-48d5-8431-3003c5b1e67e,True,2025-05-28T22:49:08.061219,1ubgSKx-H38i_vXaGOOkhA9mnER3JR2JqePRNN8CpRQ,2025-06-27T23:45:16.512882

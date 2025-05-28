@@ -71,6 +71,9 @@ Replace localhost/5000 if you host/port is different
 
 * This command will create a public URL (e.g., `https://your-serveo-subdomain.serveo.net`) forwarding to your local `5000` port.
 
+An alternative can be localhost.run
+
+ssh -R 80:localhost:5000 localhost.run
 
 ## 4. Run Expo Front-End
 
