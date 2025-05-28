@@ -28,7 +28,7 @@ def login():
             identity=user_row["id"],
             expires_delta=timedelta(minutes=ACCESS_TOKEN_VALIDITY_MINUTES),
         )
-        refresh, refresh_expiry = db.creating_refresh_token(user_row["id"])
+        refresh_token, refresh_token_expiry = db.creating_refresh_token(user_row["id"])
         return (
             jsonify(
                 {
@@ -36,6 +36,7 @@ def login():
                     "id": user_row["id"],
                     "firstAccess": bool(user_row["first-access"]),
                     "access_token": access_token,
+                    "refresh_token": refresh_token,
                 }
             ),
             200,
@@ -49,6 +50,23 @@ def login():
             ),
             401,
         )
+
+@login_signin_bp.route("/fast_login", methods=["GET"])
+@jwt_required()
+def fast_login():
+
+    token_user_id = get_jwt_identity()
+    if db.user_exists(token_user_id, "id"):
+        user_row = db.get_user_data_by_id(token_user_id)
+        return jsonify(
+                {
+                    "message": "Access allowed",
+                    "id": token_user_id,
+                    "firstAccess": bool(user_row["first-access"]),
+                }
+            ), 200
+    else:
+        return jsonify({"message":"Invalid User"}), 401
 
 
 @login_signin_bp.route("/register", methods=["POST"])
@@ -91,20 +109,19 @@ def refresh_token():
         identity=user_id, expires_delta=timedelta(minutes=10)
     )
 
-    # —— Opzionale: rotation del refresh token ——
-    # db.creating_refresh_token(user_row["id"])
+    refresh_token, refresh_token_expiry = db.creating_refresh_token(user.iloc[0]["id"])
 
-    return jsonify(access_token=new_access), 200
+    return jsonify(access_token=new_access, refresh_token=refresh_token), 200
 
 
-@login_signin_bp.route("/logout", methods=["POST"])
+@login_signin_bp.route("/logout", methods=["GET"])
 @jwt_required()
 def logout():
     user_id = get_jwt_identity()
-    # svuota il refresh token in CSV
+
     db.change_cell(user_id, CSV_FILE, "refresh_token", "")
     db.change_cell(user_id, CSV_FILE, "refresh_token_expiry", "")
-    return jsonify(msg="Logout effettuato"), 200
+    return jsonify(message="Logout effettuato"), 200
 
 
 @login_signin_bp.route("/api/first-access", methods=["POST"])
@@ -119,6 +136,10 @@ def first_access():
 
     if user_id == "" or user_id is None:
         return jsonify({"message": "Internal Error, please retry"}), 400
+    
+    token_user_id = get_jwt_identity()
+    if str(user_id) != str(token_user_id):
+        return jsonify({"message": "Unauthorized: token does not match user ID"}), 403
 
     # validate required fields
     required = {
@@ -136,7 +157,7 @@ def first_access():
         return jsonify({"message": "User not found"}), 404
 
     if not db.change_cell(
-        file="users.csv", user_id=user_id, field="first-access", value=True
+        file=CSV_FILE, user_id=user_id, field="first-access", value=True
     ):
         return jsonify({"message": "Failed to update internal database"}), 500
 

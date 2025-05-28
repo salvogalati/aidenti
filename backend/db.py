@@ -44,6 +44,12 @@ def user_exists(value, field="email"):
     df = load_users()
     return value in df[field].values
 
+def get_user_data_by_id(id_):
+    df = load_users()
+    user_row = df[df["id"] == id_]
+    if user_row.empty: return {}
+    else: return user_row.iloc[0]
+
 
 def change_cell(user_id, file, field, value):
     try:
@@ -89,7 +95,7 @@ def add_user(email, password, token):
     new_id = str(uuid.uuid4())
     registration_date = datetime.now().isoformat()
     new_user = pd.DataFrame(
-        [[new_id, email, password, False, token, False, registration_date, None, None]],
+        [[new_id, email, password, False, token, False, registration_date, None, None, None, None]],
         columns=[
             "id",
             "email",

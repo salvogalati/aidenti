@@ -40,7 +40,6 @@ def index():
 
 
 @app.route("/api/avatar_images", methods=["GET"])
-@jwt_required()
 def get_images():
     filenames = {
         f.name: f
