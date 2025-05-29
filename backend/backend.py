@@ -28,7 +28,7 @@ logger.setLevel(log_level)
 
 # File handler with rotation: max 1MB per file, keep 3 backups
 file_handler = RotatingFileHandler(
-    filename="logs/app.log", maxBytes=1_000_000, backupCount=3, encoding="utf-8"
+    filename="app.log", maxBytes=1_000_000, backupCount=3, encoding="utf-8"
 )
 file_handler.setLevel(log_level)
 
