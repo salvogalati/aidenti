@@ -52,7 +52,6 @@ export const checkSession = async (router: Router) => {
 		router.push({ pathname: route, params: { userId: data.id } });
 	} catch (e) {
 		console.error(e);
-		router.replace('/');
 	}
 }
 
