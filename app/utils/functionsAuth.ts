@@ -34,7 +34,7 @@ export const checkSession = async (router: Router) => {
 		const token = await getToken(TOKEN_KEYS.access);
 
 		if (!token) {
-			throw new Error('Token doesn\'t exist');
+			return;
 		}
 
 		const res = await fetchWithAuth('/fast_login', { method: 'GET' }, router);
