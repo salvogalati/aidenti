@@ -14,6 +14,8 @@ from config import (
 )
 from utils import send_email
 
+# from werkzeug.security import generate_password_hash, check_password_hash >>> Enable when PWD will be hashed
+
 
 def load_users():
     if not os.path.exists(CSV_FILE):
@@ -86,7 +88,9 @@ def check_credentials(email, password):
     user_row = df[df["email"] == email]
     if user_row.empty:
         return False, "Invalid User", user_row
-    if user_row.iloc[0]["password"] != password:
+    if (
+        user_row.iloc[0]["password"] != password
+    ):  # not check_password_hash(user_row.iloc[0]["password"], password)
         return False, "Invalid Password", None
     if not user_row.iloc[0]["verified"]:
         return False, "Email not verified", None
@@ -102,7 +106,7 @@ def add_user(email, password, token):
             [
                 new_id,
                 email,
-                password,
+                password,  # generate_password_hash(password)
                 False,
                 token,
                 False,
@@ -233,7 +237,7 @@ def get_dashboard_user_data(user_id, keys):
     valid_keys = [k for k in keys if k in user_row.index]
     unknown = set(keys) - set(valid_keys)
     if len(unknown) > 0:
-        message += "fKeys not found and ignored: {unknown}"
+        message += f"Keys not found and ignored: {unknown}"
     if len(valid_keys) == 0:
         return False, "No requested keys found "
     user_row_dict = user_row[valid_keys].to_dict()

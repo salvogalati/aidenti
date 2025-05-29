@@ -110,7 +110,7 @@ def refresh_token():
 
     user_id = user.iloc[0]["id"]
     new_access = create_access_token(
-        identity=user_id, expires_delta=timedelta(minutes=10)
+        identity=user_id, expires_delta=timedelta(minutes=ACCESS_TOKEN_VALIDITY_MINUTES)
     )
 
     refresh_token, refresh_token_expiry = db.creating_refresh_token(user.iloc[0]["id"])

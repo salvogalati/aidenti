@@ -7,7 +7,7 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent))
 
-from config import EMAIL_APP, EMAIL_APP_PASSWORD, EMAIL_APP_SMTP, EMAIL_APP_SMTP_PORT
+from config import EMAIL_SMTP
 
 
 def send_verification_email(to_email: str, verification_link: str):
@@ -92,9 +92,9 @@ def send_verification_email(to_email: str, verification_link: str):
         message.attach(part1)
         message.attach(part2)
 
-        with smtplib.SMTP_SSL(EMAIL_APP_SMTP, int(EMAIL_APP_SMTP_PORT)) as server:
-            server.login(EMAIL_APP, EMAIL_APP_PASSWORD)
-            server.sendmail(EMAIL_APP, to_email, message.as_string())
+        with smtplib.SMTP_SSL(EMAIL_SMTP["host"], int(EMAIL_SMTP["port"])) as server:
+            server.login(EMAIL_SMTP["username"], EMAIL_SMTP["password"])
+            server.sendmail(EMAIL_SMTP["username"], to_email, message.as_string())
 
         return (
             True,
@@ -191,9 +191,9 @@ def send_reset_password_email(to_email: str, reset_link: str):
         message.attach(part1)
         message.attach(part2)
 
-        with smtplib.SMTP_SSL(EMAIL_APP_SMTP, int(EMAIL_APP_SMTP_PORT)) as server:
-            server.login(EMAIL_APP, EMAIL_APP_PASSWORD)
-            server.sendmail(EMAIL_APP, to_email, message.as_string())
+        with smtplib.SMTP_SSL(EMAIL_SMTP["host"], int(EMAIL_SMTP["port"])) as server:
+            server.login(EMAIL_SMTP["username"], EMAIL_SMTP["password"])
+            server.sendmail(EMAIL_SMTP["username"], to_email, message.as_string())
 
         return (
             True,
