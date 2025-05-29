@@ -5,7 +5,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 
 import db
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import get_jwt_identity, jwt_required
 
 dashboard_bp = Blueprint("dashboard", __name__)
 
@@ -22,7 +22,7 @@ def get_userdata():
 
     if not db.user_exists(field="id", value=user_id):
         return jsonify({"message": "User not found"}), 404
-    
+
     token_user_id = get_jwt_identity()
     if str(user_id) != str(token_user_id):
         return jsonify({"message": "Unauthorized: token does not match user ID"}), 403

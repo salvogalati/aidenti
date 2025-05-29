@@ -46,6 +46,8 @@ __pycache__/
 .venv/
 build/
 dist/
+backend/.env
+backend/age-key.txt
 
 # File temporanei
 *.log

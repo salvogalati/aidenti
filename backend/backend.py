@@ -3,7 +3,7 @@ import os
 from config import AVATAR_FOLDER, AVATAR_URI, JWT_SECRET_KEY
 from flask import Flask, jsonify, render_template, request
 from flask_cors import CORS
-from flask_jwt_extended import JWTManager, jwt_required
+from flask_jwt_extended import JWTManager
 from routes.dashboard import dashboard_bp
 from routes.login_signin import login_signin_bp
 

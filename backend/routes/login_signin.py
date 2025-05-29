@@ -51,6 +51,7 @@ def login():
             401,
         )
 
+
 @login_signin_bp.route("/fast_login", methods=["GET"])
 @jwt_required()
 def fast_login():
@@ -58,15 +59,18 @@ def fast_login():
     token_user_id = get_jwt_identity()
     if db.user_exists(token_user_id, "id"):
         user_row = db.get_user_data_by_id(token_user_id)
-        return jsonify(
+        return (
+            jsonify(
                 {
                     "message": "Access allowed",
                     "id": token_user_id,
                     "firstAccess": bool(user_row["first-access"]),
                 }
-            ), 200
+            ),
+            200,
+        )
     else:
-        return jsonify({"message":"Invalid User"}), 401
+        return jsonify({"message": "Invalid User"}), 401
 
 
 @login_signin_bp.route("/register", methods=["POST"])
@@ -136,7 +140,7 @@ def first_access():
 
     if user_id == "" or user_id is None:
         return jsonify({"message": "Internal Error, please retry"}), 400
-    
+
     token_user_id = get_jwt_identity()
     if str(user_id) != str(token_user_id):
         return jsonify({"message": "Unauthorized: token does not match user ID"}), 403

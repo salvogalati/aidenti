@@ -1,23 +1,20 @@
 import smtplib
+import sys
 import traceback
-from email.header import Header
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.utils import formataddr
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).parent.parent))
+
+from config import EMAIL_APP, EMAIL_APP_PASSWORD, EMAIL_APP_SMTP, EMAIL_APP_SMTP_PORT
 
 
 def send_verification_email(to_email: str, verification_link: str):
     try:
-        smtp_server = "smtp.libero.it"
-        smtp_port = 465
-        sender_email = "aidenti-beast@libero.it"
-        sender_password = "SalvoNicola1!"
-
         message = MIMEMultipart("alternative")
         message["Subject"] = "Verifica la registrazione del tuo account"
-        message["From"] = formataddr(
-            (str(Header("AIDENTI", "utf-8")), "aidenti@noreply.it")
-        )
+        message["From"] = "AIdenti reset password"
         message["To"] = to_email
 
         text = f"""\
@@ -95,9 +92,9 @@ def send_verification_email(to_email: str, verification_link: str):
         message.attach(part1)
         message.attach(part2)
 
-        with smtplib.SMTP_SSL(smtp_server, smtp_port) as server:
-            server.login(sender_email, sender_password)
-            server.sendmail(sender_email, to_email, message.as_string())
+        with smtplib.SMTP_SSL(EMAIL_APP_SMTP, int(EMAIL_APP_SMTP_PORT)) as server:
+            server.login(EMAIL_APP, EMAIL_APP_PASSWORD)
+            server.sendmail(EMAIL_APP, to_email, message.as_string())
 
         return (
             True,
@@ -111,16 +108,9 @@ def send_verification_email(to_email: str, verification_link: str):
 
 def send_reset_password_email(to_email: str, reset_link: str):
     try:
-        smtp_server = "smtp.libero.it"
-        smtp_port = 465
-        sender_email = "aidenti-beast@libero.it"
-        sender_password = "SalvoNicola1!"
-
         message = MIMEMultipart("alternative")
         message["Subject"] = "AIdenti reset password"
-        message["From"] = formataddr(
-            (str(Header("AIDENTI", "utf-8")), "aidenti@noreply.it")
-        )
+        message["From"] = "AIdenti reset password"
         message["To"] = to_email
 
         text = f"""\
@@ -201,9 +191,9 @@ def send_reset_password_email(to_email: str, reset_link: str):
         message.attach(part1)
         message.attach(part2)
 
-        with smtplib.SMTP_SSL(smtp_server, smtp_port) as server:
-            server.login(sender_email, sender_password)
-            server.sendmail(sender_email, to_email, message.as_string())
+        with smtplib.SMTP_SSL(EMAIL_APP_SMTP, int(EMAIL_APP_SMTP_PORT)) as server:
+            server.login(EMAIL_APP, EMAIL_APP_PASSWORD)
+            server.sendmail(EMAIL_APP, to_email, message.as_string())
 
         return (
             True,
