@@ -1,6 +1,8 @@
+import logging
 import os
+from logging.handlers import RotatingFileHandler
 
-from config import AVATAR_FOLDER, AVATAR_URI, JWT_SECRET_KEY
+from config import AVATAR_FOLDER, AVATAR_URI, DEBUG, JWT_SECRET_KEY, PORT
 from flask import Flask, jsonify, render_template, request
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
@@ -14,6 +16,42 @@ app.register_blueprint(dashboard_bp)
 
 JWTManager(app)
 CORS(app)
+
+# ==== LOGGING CONFIGURATION ====
+
+# Determine log level based on DEBUG flag
+log_level = logging.DEBUG if DEBUG else logging.INFO
+
+# Create a dedicated logger for the application
+logger = logging.getLogger("aidenti")
+logger.setLevel(log_level)
+
+# File handler with rotation: max 1MB per file, keep 3 backups
+file_handler = RotatingFileHandler(
+    filename="logs/app.log", maxBytes=1_000_000, backupCount=3, encoding="utf-8"
+)
+file_handler.setLevel(log_level)
+
+# Define log message format
+formatter = logging.Formatter(
+    "%(asctime)s %(levelname)s [%(name)s] %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
+)
+file_handler.setFormatter(formatter)
+
+# Console handler for stdout, useful in Docker or development
+console_handler = logging.StreamHandler()
+console_handler.setLevel(log_level)
+console_handler.setFormatter(formatter)
+
+# Attach handlers to the logger
+logger.addHandler(file_handler)
+logger.addHandler(console_handler)
+
+# Integrate Flask's logger with the configured handlers
+app.logger.handlers = logger.handlers
+app.logger.setLevel(logger.level)
+
+# === END LOGGING CONFIGURATION ===
 
 
 @app.route("/test_get", methods=["GET"])
@@ -48,6 +86,8 @@ def get_images():
         and f.name.lower().endswith(".png")
         and "Avatar" in f.name
     }
+    if len(filenames) == 0:
+        app.logger.warning("No PNG Avatar present in folder")
     avatars = []
     for idx, filename in filenames.items():
         data_uri = f"{AVATAR_URI}{idx}"
@@ -56,4 +96,4 @@ def get_images():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5001)
+    app.run(debug=DEBUG, port=PORT)
