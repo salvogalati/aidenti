@@ -10,18 +10,18 @@ export const getUserData = async (userId: string, arrayKays: string[], setUser: 
 		}, router);
 
 		if (!res.ok) {
-			throw new Error(`Error to fetch datas`);
+			throw new Error('Failed to fetch user data');
 		}
 
 		const data = await res.json();
 
-		if (!data || !data.user_data) {
-			throw new Error(data.message || 'User\'s datas not found');
+		if (!data?.user_data || typeof data.user_data !== 'object') {
+			throw new Error(data.message || 'User data not found');
 		}
-	
+
 		setUser(data.user_data);
 	} catch (e) {
-		console.error(e);
+		console.error('Error fetching user data:', e);
 		setUser(null);
 		router.push('/');
 	}

@@ -3,6 +3,7 @@ import React, { SetStateAction } from "react";
 import { Router } from "expo-router";
 import { Platform } from "react-native";
 import * as SecureStore from 'expo-secure-store';
+import { TOKEN_KEYS } from "@/constans/tokensKeys";
 
 const getToken = async (key: string) => {
 	if (Platform.OS === 'web') {
@@ -30,7 +31,7 @@ export const removeToken = async (key: string) => {
 
 export const checkSession = async (router: Router) => {
 	try {
-		const token = await getToken('access_token');
+		const token = await getToken(TOKEN_KEYS.access);
 
 		if (!token) {
 			throw new Error('Token doesn\'t exist');
@@ -39,42 +40,38 @@ export const checkSession = async (router: Router) => {
 		const res = await fetchWithAuth('/fast_login', { method: 'GET' }, router);
 
 		if (!res.ok) {
-			throw new Error(`Error to fetch datas`);
+			throw new Error('Failed to fetch session data');
 		}
 
 		const data = await res.json();
 
-		if (!data.firstAccess) {
-			router.push({
-				pathname: '/first-access/[userId]',
-				params: { userId: data.id },
-			});
-		} else {
-			router.push({
-				pathname: '/dashboard/[userId]',
-				params: { userId: data.id },
-			});
-		}
+		const route = !data.firstAccess
+			? '/first-access/[userId]'
+			: '/dashboard/[userId]';
+
+		router.push({ pathname: route, params: { userId: data.id } });
 	} catch (e) {
 		console.error(e);
+		router.replace('/');
 	}
 }
 
 export const checkToken = async (router: Router) => {
 	try {
-		const token = await getToken('access_token');
+		const token = await getToken(TOKEN_KEYS.access);
 		if (!token) {
+			console.warn('No access token found. Redirecting to login...');
 			router.replace('/');
 		}
 	} catch (e) {
-		console.error(e);
+		console.error('Error while checking access token:', e);
 		router.replace('/');
 	}
 };
 
 export const fetchWithAuth = async (url: string, options: RequestInit = {}, router: Router) => {
-	let accessToken = await getToken('access_token');
-	let refreshToken = await getToken('refresh_token');
+	let accessToken = await getToken(TOKEN_KEYS.access);
+	let refreshToken = await getToken(TOKEN_KEYS.refresh);
 
 	const headers = {
 		...(options.headers || {}),
@@ -101,10 +98,10 @@ export const fetchWithAuth = async (url: string, options: RequestInit = {}, rout
 			refreshToken = data.refresh_token;
 
 			if (accessToken) {
-				await setToken('access_token', accessToken);
+				await setToken(TOKEN_KEYS.access, accessToken);
 			}
 			if (refreshToken) {
-				await setToken('refresh_token', refreshToken);
+				await setToken(TOKEN_KEYS.refresh, refreshToken);
 			}
 
 			const retryHeaders = {
@@ -117,8 +114,9 @@ export const fetchWithAuth = async (url: string, options: RequestInit = {}, rout
 				headers: retryHeaders,
 			});
 		} else {
-			await removeToken('access_token');
-			await removeToken('refresh_token');
+			await removeToken(TOKEN_KEYS.access);
+			await removeToken(TOKEN_KEYS.refresh);
+			console.warn('Refresh token failed. Redirecting to login.');
 			router.replace('/');
 		}
 	}
@@ -145,47 +143,23 @@ const login = async (email: string, password: string, setMessage: React.Dispatch
 
 		setMessage(data.message);
 
-		if (Platform.OS === 'web') {
-			try {
-				if (data.access_token === null) {
-					localStorage.removeItem('access_token');
-				} else {
-					localStorage.setItem('access_token', data.access_token);
-				}
-
-				if (data.refresh_token === null) {
-					localStorage.removeItem('refresh_token');
-				} else {
-					localStorage.setItem('refresh_token', data.refresh_token);
-				}
-			} catch (e) {
-				console.error('Local storage is unavailable:', e);
-			}
+		if (data.access_token) {
+			await setToken(TOKEN_KEYS.access, data.access_token);
 		} else {
-			if (data.access_token == null) {
-				await SecureStore.deleteItemAsync('access_token');
-			} else {
-				await SecureStore.setItemAsync('access_token', data.access_token);
-			}
-
-			if (data.refresh_token == null) {
-				await SecureStore.deleteItemAsync('refresh_token');
-			} else {
-				await SecureStore.setItemAsync('refresh_token', data.refresh_token);
-			}
+			await removeToken(TOKEN_KEYS.access);
 		}
 
-		if (!data.firstAccess) {
-			router.push({
-				pathname: '/first-access/[userId]',
-				params: { userId: data.id },
-			});
+		if (data.refresh_token) {
+			await setToken(TOKEN_KEYS.refresh, data.refresh_token);
 		} else {
-			router.push({
-				pathname: '/dashboard/[userId]',
-				params: { userId: data.id },
-			});
+			await removeToken(TOKEN_KEYS.refresh);
 		}
+
+		const route = !data.firstAccess
+			? '/first-access/[userId]'
+			: '/dashboard/[userId]';
+
+		router.push({ pathname: route, params: { userId: data.id } });
 	} catch (error) {
 		if (error instanceof Error) {
 			console.error('Error during login:', error.message);

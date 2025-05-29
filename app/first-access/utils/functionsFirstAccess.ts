@@ -16,7 +16,7 @@ export const firstAccess = async (payload: IFirstAccess, router: Router, setErro
 
 		const data = await response.json();
 
-		if (!response.ok) {
+		if (!response.ok || !data.id) {
 			throw new Error(data.message || 'Errore durante il first access');
 		}
 
@@ -25,12 +25,8 @@ export const firstAccess = async (payload: IFirstAccess, router: Router, setErro
 			params: { userId: data.id },
 		});
 	} catch (error) {
-		if (error instanceof Error) {
-			console.error('Error during first access:', error.message);
-			setErrorMessage(error.message);
-		} else {
-			console.error('Unknown error during first access:', error);
-		}
+		console.error('Error during first access:', error);
+		setErrorMessage(error instanceof Error ? error.message : 'Unknown error');
 		router.replace('/');
 	} finally {
 		setIsSending(false);
@@ -41,10 +37,14 @@ export const getAvatars = async (setIsLoading: React.Dispatch<SetStateAction<boo
 	try {
 		setIsLoading(true);
 		const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/avatar_images`);
+		if (!res.ok) {
+			throw new Error('Failed to fetch avatars');
+		}
 		const data = await res.json();
 		setAvatars(data);
 	} catch (e) {
-		console.error(e);
+		console.error('Error fetching avatars:', e);
+		setAvatars([]);
 	} finally {
 		setIsLoading(false);
 	}
