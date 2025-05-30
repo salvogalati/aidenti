@@ -70,7 +70,7 @@ export default function Auth() {
 					<View className="absolute w-full h-full top-0 left-0">
 						<Image blurRadius={5} className="object-cover" style={{ width: '100%', height: '100%' }} source={require('./assets/backgroundLogin.png')} />
 					</View>
-					<VStack>
+					<VStack className='w-full max-w-[300px]'>
 						<SwitchAuth
 							isLoginPage={isLoginPage}
 							setIsLoginPage={setIsLoginPage}
@@ -81,7 +81,7 @@ export default function Auth() {
 							isSending={isSending}
 						/>
 
-						<VStack className="w-full max-w-[300px] rounded-bl-md rounded-br-md border border-background-200 p-4 relative bg-white">
+						<VStack className="w-full rounded-bl-md rounded-br-md border border-background-200 p-4 relative bg-white">
 							<Monster classMonster={`absolute top-3 right-0 max-w-52 max-h-52 ${hasErrors ? 'animate-hesitate' : 'animate-walk-and-flip'}`} />
 							<Text style={{ fontFamily: 'IndieFlower_400Regular' }} className="text-[30px] mb-2 font-semibold">
 								{isLoginPage ? "Log in" : "Sign in"}
