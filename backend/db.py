@@ -89,7 +89,7 @@ def check_credentials(email, password):
     if user_row.empty:
         return False, "Invalid User", user_row
     if (
-        user_row.iloc[0]["password"] != password
+        str(user_row.iloc[0]["password"]) != str(password)
     ):  # not check_password_hash(user_row.iloc[0]["password"], password)
         return False, "Invalid Password", None
     if not user_row.iloc[0]["verified"]:
