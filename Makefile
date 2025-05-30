@@ -4,7 +4,7 @@ CWD := $(shell pwd)
 PUBLIC_KEY = age1nxz3g8efegfv6l8ey2gpz28sd5z3zc2dgmvdpxzvswhgh47shdeqc7y5du
 SOPS_PATH = "C:\Users\sgala\Projects\Utils\sops.exe"
 
-FILES_TO_ENCRYPT = backend/.env
+FILES_TO_ENCRYPT = backend/.env .env
 
 # Create conda environment
 create_environment:
@@ -48,7 +48,7 @@ secrets-encrpyt:
 .PHONY: secrets-decrypt
 ## encrypt secrets with SOPS and AGE
 secrets-decrypt:
-	export SOPS_AGE_KEY_FILE=backend/age-key.txt; \
+	export SOPS_AGE_KEY_FILE=age-key.txt; \
 	for file in $(FILES_TO_ENCRYPT); do \
 		echo "Decrypting: $$file"; \
 		sops --decrypt --input-type binary --output-type binary $${file}.enc > $${file}; \
