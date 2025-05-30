@@ -1,50 +1,143 @@
-# Welcome to your Expo app 👋
+# AIdenti
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+ <p align="center">
+	<img src="https://github.com/nmarmugi/nicola-salvatore/blob/main/app/assets/logoApp.png?raw=true" alt="Descrizione" width="150"/>
+</p>
 
-## Get started
+This repository contains the source code for the mobile application AIdenti and its associated backend. The app is developed using [Expo](https://expo.dev) (React Native) for the frontend and [Flask](https://flask.palletsprojects.com/) for the backend.
 
-1. Install dependencies
+  
 
-   ```bash
-   npm install
-   ```
+## Project Structure
 
-2. Start the app
+  
 
-   ```bash
-    npx expo start
-   ```
+-  **app/**: mobile app source code (Expo/React Native)
 
-In the output, you'll find options to open the app in a
+-  **backend/**: backend API written in Python/Flask
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+-  **assets/**: static resources (icons, images, etc.)
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- Other configuration files (e.g., `package.json`, `environment.yaml`, etc.)
 
-## Get a fresh project
+  
 
-When you're ready, run:
+---
+
+  
+
+## Getting Started
+
+  
+
+### 1. Backend (Flask)
+
+  
+
+Follow the detailed instructions in [`backend/README.md`](./backend/README.md) to:
+
+  
+
+- Install Miniconda (if necessary)
+
+- Create and activate the conda environment
+
+- Start the Flask server (`python api.py`)
+
+- Expose the backend via Serveo or another SSH tunnel
+
+  
+
+### 2. Frontend (Expo/React Native)
+
+  
+
+Make sure you have Node.js and npm installed.
+
+  
+
+1. Install dependencies:
+
+  
 
 ```bash
-npm run reset-project
+
+npm install
+
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+  
 
-## Learn more
+2. Start the Expo app:
 
-To learn more about developing your project with Expo, look at the following resources:
+  
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
 
-## Join the community
+npx expo start
 
-Join our community of developers creating universal apps.
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+  
+
+From the Expo console, you can choose to open the app on an Android/iOS emulator or a physical device using the Expo Go app.
+
+  
+
+---
+
+  
+
+## Development
+
+  
+
+- The app code is located in the `app/` directory.
+
+- To edit global styles, see `global.css`.
+
+- Tailwind CSS configuration is in `tailwind.config.js`.
+
+- The app communicates with the backend via HTTP calls to the address provided by the Serveo tunnel.
+
+  
+
+---
+
+  
+
+## Useful Resources
+
+  
+
+- [Expo Documentation](https://docs.expo.dev/)
+
+- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/)
+
+- [Flask Documentation](https://flask.palletsprojects.com/)
+
+  
+
+---
+
+  
+
+## Contributions
+
+  
+
+If you want to contribute, open an issue or a pull request! For questions, you can use the project board or contact the maintainers.
+
+  
+
+---
+
+  
+
+## Notes
+
+  
+
+- Remember to configure the app’s connection to the backend by modifying environment variables or config files as instructed.
+
+- Any significant change to the backend should also be documented in `backend/README.md`.
