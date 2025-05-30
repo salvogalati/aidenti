@@ -13,6 +13,7 @@ import { IndieFlower_400Regular, useFonts } from '@expo-google-fonts/indie-flowe
 import Monster from "./components/monster/monster";
 import colors from "tailwindcss/colors";
 import { Link, useRouter } from "expo-router";
+import { Box } from "./components/ui/box";
 
 export default function Auth() {
 	const [inputValue, setInputValue] = React.useState({
@@ -69,63 +70,7 @@ export default function Auth() {
 					<View className="absolute w-full h-full top-0 left-0">
 						<Image blurRadius={5} className="object-cover" style={{ width: '100%', height: '100%' }} source={require('./assets/backgroundLogin.png')} />
 					</View>
-					<VStack className="w-full max-w-[300px] rounded-md border border-background-200 p-4 relative bg-white">
-						<Monster classMonster={`absolute top-3 right-0 max-w-52 max-h-52 ${hasErrors ? 'animate-hesitate' : 'animate-walk-and-flip'}`} />
-						<Text style={{ fontFamily: 'IndieFlower_400Regular' }} className="text-[30px] mb-2 font-semibold">
-							{isLoginPage ? "Log in" : "Sign in"}
-						</Text>
-
-						<EmailInput
-							isInvalid={isInvalid}
-							inputValue={inputValue}
-							setInputValue={setInputValue}
-						/>
-
-						<PasswordInput
-							isInvalid={isInvalid}
-							inputValue={inputValue}
-							setInputValue={setInputValue}
-							showPassword={showPassword}
-							handleState={() => handleState(setShowPassword)}
-						/>
-
-						{!isLoginPage && (
-							<ConfirmPasswordInput
-								isInvalid={isInvalid}
-								inputValue={inputValue}
-								setInputValue={setInputValue}
-								showPassword={showPassword}
-								handleState={() => handleState(setShowPassword)}
-							/>
-						)}
-
-						{
-							isLoginPage &&
-							<Link href="/forgot-password" className="underline">
-								Forgot password?
-							</Link>
-						}
-
-						{
-							message &&
-							<Text className="text-end mt-2">
-								{message}
-							</Text>
-						}
-
-						<Button
-							className={`w-fit self-end mt-4 ${!canSubmit || isSending ? "opacity-50" : ""}`}
-							size="sm"
-							onPress={() => handleSubmit(inputValue, isLoginPage, setIsInvalid, setMessage, setIsSending, router)}
-							disabled={!canSubmit || isSending}
-						>
-							{
-								isSending &&
-								<ButtonSpinner color={colors.gray[400]} />
-							}
-							<ButtonText>Submit</ButtonText>
-						</Button>
-
+					<VStack>
 						<SwitchAuth
 							isLoginPage={isLoginPage}
 							setIsLoginPage={setIsLoginPage}
@@ -135,6 +80,66 @@ export default function Auth() {
 							setMessage={setMessage}
 							isSending={isSending}
 						/>
+
+						<VStack className="w-full max-w-[300px] rounded-bl-md rounded-br-md border border-background-200 p-4 relative bg-white">
+							<Monster classMonster={`absolute top-3 right-0 max-w-52 max-h-52 ${hasErrors ? 'animate-hesitate' : 'animate-walk-and-flip'}`} />
+							<Text style={{ fontFamily: 'IndieFlower_400Regular' }} className="text-[30px] mb-2 font-semibold">
+								{isLoginPage ? "Log in" : "Sign in"}
+							</Text>
+
+							<EmailInput
+								isInvalid={isInvalid}
+								inputValue={inputValue}
+								setInputValue={setInputValue}
+							/>
+
+							<PasswordInput
+								isInvalid={isInvalid}
+								inputValue={inputValue}
+								setInputValue={setInputValue}
+								showPassword={showPassword}
+								handleState={() => handleState(setShowPassword)}
+							/>
+
+							{!isLoginPage && (
+								<ConfirmPasswordInput
+									isInvalid={isInvalid}
+									inputValue={inputValue}
+									setInputValue={setInputValue}
+									showPassword={showPassword}
+									handleState={() => handleState(setShowPassword)}
+								/>
+							)}
+
+							{
+								isLoginPage &&
+								<Box className="mt-1">
+									<Link href="/forgot-password" className="underline">
+										Forgot password?
+									</Link>
+								</Box>
+							}
+
+							{
+								message &&
+								<Text className="text-end mt-2">
+									{message}
+								</Text>
+							}
+
+							<Button
+								className={`w-fit self-end mt-4 ${!canSubmit || isSending ? "opacity-50" : ""}`}
+								size="sm"
+								onPress={() => handleSubmit(inputValue, isLoginPage, setIsInvalid, setMessage, setIsSending, router)}
+								disabled={!canSubmit || isSending}
+							>
+								{
+									isSending &&
+									<ButtonSpinner color={colors.gray[400]} />
+								}
+								<ButtonText>Submit</ButtonText>
+							</Button>
+						</VStack>
 					</VStack>
 				</>
 			)}

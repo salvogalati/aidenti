@@ -12,9 +12,10 @@ import Monster from "./components/monster/monster";
 import Avatars from "./components/avatars/avatars";
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { firstAccess } from "./utils/functionsFirstAccess";
-import { Text } from "react-native";
+import { Text, View } from "react-native";
 import colors from "tailwindcss/colors";
 import { checkToken } from "@/utils/functionsAuth";
+import { Image } from "react-native";
 
 export default function FirstAccessPage() {
 	const [fontsLoaded] = useFonts({
@@ -54,9 +55,12 @@ export default function FirstAccessPage() {
 	}
 
 	return (
-		<VStack className="w-full h-full justify-center items-center">
-			<Box className="rounded-md border border-background-200 p-4 flex gap-1 relative w-[300px]">
-				<Monster classMonster={`absolute -top-24 left-0 max-w-52 max-h-52`} />
+		<VStack className="w-full h-full justify-center items-center relative">
+			<View className="absolute w-full h-full top-0 left-0">
+				<Image blurRadius={5} className="object-cover" style={{ width: '100%', height: '100%' }} source={require('./assets/bgForm.png')} />
+			</View>
+			<Box className="rounded-md bg-white border border-background-200 p-4 flex gap-1 relative w-[300px]">
+				<Monster classMonster={`absolute -top-20 left-0 max-w-52 max-h-52`} />
 				{
 					!avatarLayout ?
 						<>
