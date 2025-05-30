@@ -165,11 +165,11 @@ def first_access():
     ):
         return jsonify({"message": "Failed to update internal database"}), 500
 
-    res = db.update_dashboard_db(data)
+    res, msg = db.create_dashboard_instance(data)
     if res:
-        return jsonify({"message": "dashboard entry created", "id": user_id}), 200
+        return jsonify({"message": msg, "id": user_id}), 200
     else:
-        return jsonify({"message": "Failed to update dashboard database"}), 500
+        return jsonify({"message": msg}), 500
 
 
 @login_signin_bp.route("/verify-email")
