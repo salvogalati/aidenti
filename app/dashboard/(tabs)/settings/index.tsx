@@ -17,8 +17,7 @@ export default function Settings() {
     const [isSending, setIsSending] = useState(false);
     const [payload, setPayload] = useState({ id: '', username: '', date_of_birth: '', gender: '', avatar_id: '' });
     const { user, setUser } = useContext(UserContext);
-    const [errorMessage, setErrorMessage] = useState('');
-    const [successMessage, setSuccessMessage] = useState('');
+    const [message, setMessage] = useState('');
 
     useEffect(() => {
         if (Platform.OS === 'web') {
@@ -46,15 +45,9 @@ export default function Settings() {
                 }
                 <Username payload={payload} setPayload={setPayload} />
                 {
-                    errorMessage &&
+                    message &&
                     <Text>
-                        {errorMessage}
-                    </Text>
-                }
-                {
-                    successMessage &&
-                    <Text>
-                        {successMessage}
+                        {message}
                     </Text>
                 }
                 <Avatars payload={payload} setPayload={setPayload} isFirstAccessPage={false} />
@@ -62,7 +55,7 @@ export default function Settings() {
 					<Button
 						disabled={isSending}
 						className={`${isSending ? 'opacity-50' : ''}`}
-                        onPress={() => updateUserData({id: payload.id, avatar_src: payload.avatar_id, username: payload.username}, setUser, router, setErrorMessage, setSuccessMessage, setIsSending)}
+                        onPress={() => updateUserData({id: payload.id, avatar_src: payload.avatar_id, username: payload.username}, setUser, router, setMessage, setIsSending)}
 					>
 						{
 							isSending &&

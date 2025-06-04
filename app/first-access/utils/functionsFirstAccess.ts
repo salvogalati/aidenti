@@ -4,10 +4,10 @@ import { SetStateAction } from "react";
 import { IAvatar } from "../types/avatar";
 import { fetchWithAuth } from "@/utils/functionsAuth";
 
-export const firstAccess = async (payload: IFirstAccess, router: Router, setErrorMessage: React.Dispatch<SetStateAction<string>>, setIsSending: React.Dispatch<SetStateAction<boolean>>) => {
+export const firstAccess = async (payload: IFirstAccess, router: Router, setMessage: React.Dispatch<SetStateAction<string>>, setIsSending: React.Dispatch<SetStateAction<boolean>>) => {
 	try {
 		setIsSending(true);
-		setErrorMessage('');
+		setMessage('');
 
 		const response = await fetchWithAuth('/api/first-access', {
 			method: 'POST',
@@ -26,8 +26,7 @@ export const firstAccess = async (payload: IFirstAccess, router: Router, setErro
 		});
 	} catch (error) {
 		console.error('Error during first access:', error);
-		setErrorMessage(error instanceof Error ? error.message : 'Unknown error');
-		router.replace('/');
+		setMessage(error instanceof Error ? error.message : 'Unknown error');
 	} finally {
 		setIsSending(false);
 	}

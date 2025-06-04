@@ -25,7 +25,7 @@ export default function FirstAccessPage() {
 	const [avatarLayout, setAvatarLayout] = useState(false);
 	const { userId } = useLocalSearchParams();
 	const router = useRouter();
-	const [errorMessage, setErrorMessage] = useState('');
+	const [message, setMessage] = useState('');
 	const [isSending, setIsSending] = useState(false);
 	const [isMounted, setIsMounted] = useState(false);
 
@@ -74,8 +74,8 @@ export default function FirstAccessPage() {
 						<Avatars payload={payload} setPayload={setPayload} />
 				}
 				{
-					errorMessage &&
-					<Text className="text-end">{errorMessage}</Text>
+					message &&
+					<Text className="text-end">{message}</Text>
 				}
 				<HStack className="justify-end items-center gap-2 mt-4">
 					<ButtonGroup>
@@ -106,7 +106,7 @@ export default function FirstAccessPage() {
 							<Button
 								disabled={!(canSubmit && payload.avatar_id) || isSending}
 								className={`${!(canSubmit && payload.avatar_id) || isSending ? 'opacity-50' : ''}`}
-								onPress={() => firstAccess(payload, router, setErrorMessage, setIsSending)}
+								onPress={() => firstAccess(payload, router, setMessage, setIsSending)}
 							>
 								{
 									isSending &&
