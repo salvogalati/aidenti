@@ -5,11 +5,11 @@ import { View, Text } from "react-native";
 
 export default function Username({ payload, setPayload }: IUsername) {
     return (
-        <View>
+        <View className="w-full">
             <Text style={{ fontFamily: 'IndieFlower_400Regular' }} className="text-lg font-semibold">
                 Username
             </Text>
-            <Input className="my-1">
+            <Input className="my-1 w-full">
                 <InputField
                     type="text"
                     placeholder="Username"

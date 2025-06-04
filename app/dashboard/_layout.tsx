@@ -1,7 +1,7 @@
-import { Slot, useLocalSearchParams, useRouter } from 'expo-router';
+import { Slot, Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import { UserContext } from './context/UserContext';
 import { IUser } from './context/types/user';
 import { getUserData } from './context/utils/functionsUser';
@@ -44,10 +44,22 @@ export default function RootLayout() {
         );
     }
 
+    if (Platform.OS === 'web') {
+        return (
+            <UserContext.Provider value={{ user, setUser }}>
+                <View className='w-full h-full bg-white'>
+                    <Slot />
+                </View>
+            </UserContext.Provider>
+        );
+    }
+
     return (
         <UserContext.Provider value={{ user, setUser }}>
             <View className='w-full h-full bg-white'>
-                <Slot />
+                <Stack>
+                    <Stack.Screen name='(tabs)' options={{headerShown: false}} />
+                </Stack>
             </View>
         </UserContext.Provider>
     );

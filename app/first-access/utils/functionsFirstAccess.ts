@@ -17,7 +17,7 @@ export const firstAccess = async (payload: IFirstAccess, router: Router, setErro
 		const data = await response.json();
 
 		if (!response.ok || !data.id) {
-			throw new Error(data.message || 'Errore durante il first access');
+			throw new Error(data.message || 'Error during first access');
 		}
 
 		router.push({
