@@ -21,11 +21,10 @@ export const logout = async (router: Router) => {
 	}
 };
 
-export const updateUserData = async (payload: IUpdateUserData, setUser: React.Dispatch<React.SetStateAction<IUser | null>>, router: Router, setErrorMessage: React.Dispatch<SetStateAction<string>>, setSuccessMessage: React.Dispatch<SetStateAction<string>>, setIsSending: React.Dispatch<SetStateAction<boolean>>) => {
+export const updateUserData = async (payload: IUpdateUserData, setUser: React.Dispatch<React.SetStateAction<IUser | null>>, router: Router, setMessage: React.Dispatch<SetStateAction<string>>, setIsSending: React.Dispatch<SetStateAction<boolean>>) => {
 	try {
 		setIsSending(true);
-		setErrorMessage('');
-		setSuccessMessage('');
+		setMessage('');
 
 		const response = await fetchWithAuth('/dashboard/change_username_avatar', {
 			method: 'PATCH',
@@ -39,10 +38,10 @@ export const updateUserData = async (payload: IUpdateUserData, setUser: React.Di
 		}
 
 		setUser(payload)
-		setSuccessMessage(data.message);
+		setMessage(data.message);
 	} catch (error) {
 		console.error('Error during update:', error);
-		setErrorMessage(error instanceof Error ? error.message : 'Unknown error');
+		setMessage(error instanceof Error ? error.message : 'Unknown error');
 	} finally {
 		setIsSending(false);
 	}
