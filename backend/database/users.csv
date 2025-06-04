@@ -1,3 +1,3 @@
 id,email,password,verified,token-verification,first-access,registration-date,reset_token,reset_token_expiry,refresh_token,refresh_token_expiry
-7439bf43-b9af-4da6-abba-5a4f1d949ac0,nicolamarmugi1@gmail.com,1234567,True,519ab2f0-8285-449f-90e5-40c1a56c8ff9,True,2025-05-30T15:26:57.196216,,,,
+7439bf43-b9af-4da6-abba-5a4f1d949ac0,nicolamarmugi1@gmail.com,1234567,True,519ab2f0-8285-449f-90e5-40c1a56c8ff9,True,2025-05-30T15:26:57.196216,,,8kGCxbTL9Cu1IJRhDVz2rujfD8upjm5SGkN4gt1nIYY,2025-07-05T00:04:46.172713
 0b19bc48-f6be-48ba-a92f-a0cd2bf3b172,culo@gmail.com,123456,True,e8400609-0640-4ac7-801c-5b9469fd6f27,True,2025-05-30T15:28:17.326194,,,,
