@@ -36,7 +36,7 @@ export default function FirstAccessPage() {
 	useEffect(() => {
 		if (!isMounted) return;
 
-		// checkToken(router);
+		checkToken(router);
 	}, [isMounted])
 
 	const canSubmit =
