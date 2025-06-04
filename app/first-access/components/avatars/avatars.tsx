@@ -8,7 +8,7 @@ import { VStack } from "@/components/ui/vstack";
 import { IAvatar } from "@/first-access/types/avatar";
 import { getAvatars } from "@/first-access/utils/functionsFirstAccess";
 
-export default function Avatars({ payload, setPayload }: IUsername) {
+export default function Avatars({ payload, setPayload, isFirstAccessPage = true }: IUsername) {
 	const [avatars, setAvatars] = useState<IAvatar[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
 
@@ -31,8 +31,8 @@ export default function Avatars({ payload, setPayload }: IUsername) {
 				{avatars.map((avatar) => (
 					<Pressable
 						key={avatar.id}
-						onPress={() => setPayload({ ...payload, avatar_id: avatar.id })}
-						className={`w-20 h-20 rounded-full overflow-hidden ${payload.avatar_id === avatar.id && 'border-2'}`}
+						onPress={isFirstAccessPage ? () => setPayload({ ...payload, avatar_id: avatar.id }) : () => setPayload({ ...payload, avatar_id: avatar.src })}
+						className={`w-20 h-20 rounded-full overflow-hidden ${payload.avatar_id === avatar.id || payload.avatar_id === avatar.src && 'border-2'}`}
 					>
 						<Image style={{ width: '100%', height: '100%' }} source={{uri: avatar.src}} />
 					</Pressable>
