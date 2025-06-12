@@ -196,7 +196,7 @@ def check_expiration_token(token):
     return True, "OK"
 
 
-def update_dashboard_db(data):
+def create_dashboard_instance(data):
     try:
         # load or initialize dashboard CSV
         if os.path.exists(DASHBOARD_CSV):
@@ -208,7 +208,11 @@ def update_dashboard_db(data):
 
         user_row = df[df["id"] == data.get("id")]
         if not user_row.empty:
-            return False
+            return False, "User has already completed the first acces."
+        
+        if not df[df["username"] == data.get("username")].empty:
+            return False, "Username already exist"
+
         # append new record
         new_record = pd.DataFrame(
             [
@@ -225,9 +229,9 @@ def update_dashboard_db(data):
 
         # save back to CSV
         df.to_csv(DASHBOARD_CSV, index=False)
-        return True
+        return True, "Dashboard instance correctly created"
     except Exception:
-        return False
+        return False, "Error in creating new dashboard"
 
 
 def get_dashboard_user_data(user_id, keys):
