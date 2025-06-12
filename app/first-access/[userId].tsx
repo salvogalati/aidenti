@@ -82,7 +82,10 @@ export default function FirstAccessPage() {
 						<Button
 							disabled={!canSubmit}
 							className={`${!canSubmit && 'opacity-50'}`}
-							onPress={() => setAvatarLayout(!avatarLayout)}
+							onPress={() => {
+								setAvatarLayout(!avatarLayout);
+								setMessage('');
+							}}
 						>
 							{
 								avatarLayout && <ButtonIcon as={ArrowLeftIcon} />
