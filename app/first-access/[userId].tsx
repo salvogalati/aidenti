@@ -60,7 +60,7 @@ export default function FirstAccessPage() {
 				<Image blurRadius={5} className="object-cover" style={{ width: '100%', height: '100%' }} source={require('./assets/bgForm.png')} />
 			</View>
 			<Box className="rounded-md bg-white border border-background-200 p-4 flex gap-1 relative w-[300px]">
-				<Monster classMonster={`absolute -top-20 left-0 max-w-52 max-h-52`} />
+				<Monster classMonster={`absolute -top-24 left-0 max-w-52 max-h-52`} />
 				{
 					!avatarLayout ?
 						<>
