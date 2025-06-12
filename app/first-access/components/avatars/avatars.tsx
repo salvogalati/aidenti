@@ -31,10 +31,17 @@ export default function Avatars({ payload, setPayload, isFirstAccessPage = true 
 				{avatars.map((avatar) => (
 					<Pressable
 						key={avatar.id}
-						onPress={isFirstAccessPage ? () => setPayload({ ...payload, avatar_id: avatar.id }) : () => setPayload({ ...payload, avatar_id: avatar.src })}
-						className={`w-20 h-20 rounded-full overflow-hidden ${payload.avatar_id === avatar.id || payload.avatar_id === avatar.src && 'border-2'}`}
+						onPress={
+							isFirstAccessPage
+								? () => setPayload({ ...payload, avatar_id: avatar.id })
+								: () => setPayload({ ...payload, avatar_id: avatar.src })
+						}
+						className={`w-20 h-20 rounded-full overflow-hidden ${(payload.avatar_id === avatar.id || payload.avatar_id === avatar.src)
+								? 'border-2 border-primary-400'
+								: ''
+							}`}
 					>
-						<Image style={{ width: '100%', height: '100%' }} source={{uri: avatar.src}} />
+						<Image style={{ width: '100%', height: '100%' }} source={{ uri: avatar.src }} />
 					</Pressable>
 				))}
 			</HStack>
