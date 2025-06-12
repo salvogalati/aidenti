@@ -58,7 +58,8 @@ def change_username_avatar():
 
     if os.path.exists(DASHBOARD_CSV):
         df = pd.read_csv(DASHBOARD_CSV)
-        if not df[df["username"] == data.get("username")].empty:
+        df_others = df[df["id"] != user_id]
+        if not df_others[df_others["username"] == username].empty:
             return jsonify({"message": "Username already exist"}), 500
 
     # 4) Prova a modificare username e avatar_id nel CSV
