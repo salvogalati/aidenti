@@ -1,6 +1,6 @@
 import { Button, ButtonSpinner, ButtonText } from "@/components/ui/button";
 import { VStack } from "@/components/ui/vstack";
-import { Text, View } from "react-native";
+import { Keyboard, Text, TouchableWithoutFeedback, View } from "react-native";
 import React, { useEffect } from "react";
 import EmailInput from "./components/emailInput/emailInput";
 import PasswordInput from "./components/passwordInput/passwordInput";
@@ -59,6 +59,7 @@ export default function Auth() {
 	}
 
 	return (
+	<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
 		<VStack className="w-full h-full justify-center items-center relative">
 			{loading ? (
 				<>
@@ -144,5 +145,6 @@ export default function Auth() {
 				</>
 			)}
 		</VStack>
+	</TouchableWithoutFeedback>
 	);
 }

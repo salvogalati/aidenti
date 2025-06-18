@@ -12,7 +12,7 @@ import Monster from "./components/monster/monster";
 import Avatars from "./components/avatars/avatars";
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { firstAccess } from "./utils/functionsFirstAccess";
-import { Text, View } from "react-native";
+import { Keyboard, Text, TouchableWithoutFeedback, View } from "react-native";
 import colors from "tailwindcss/colors";
 import { checkToken } from "@/utils/functionsAuth";
 import { Image } from "react-native";
@@ -55,6 +55,7 @@ export default function FirstAccessPage() {
 	}
 
 	return (
+	<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
 		<VStack className="w-full h-full justify-center items-center relative">
 			<View className="absolute w-full h-full top-0 left-0">
 				<Image blurRadius={5} className="object-cover" style={{ width: '100%', height: '100%' }} source={require('./assets/bgForm.png')} />
@@ -124,5 +125,6 @@ export default function FirstAccessPage() {
 				</HStack>
 			</Box>
 		</VStack>
+	</TouchableWithoutFeedback>
 	);
 }

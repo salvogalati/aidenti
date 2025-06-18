@@ -1,7 +1,7 @@
 import { Button, ButtonGroup, ButtonIcon, ButtonSpinner, ButtonText } from "@/components/ui/button";
 import { ArrowLeftIcon } from "@/components/ui/icon";
 import { useRouter } from "expo-router";
-import { Platform, View } from "react-native";
+import { Keyboard, Platform, TouchableWithoutFeedback, View } from "react-native";
 import { logout, updateUserData } from "./utils/functionsSettings";
 import { VStack } from "@/components/ui/vstack";
 import { useContext, useEffect, useState } from "react";
@@ -32,6 +32,7 @@ export default function Settings() {
     }, [user])
 
     return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
 		<View className="w-full h-full flex justify-center items-center">
 			<VStack className="w-full max-w-[300px] items-start gap-3 p-4 border">
                 {
@@ -73,5 +74,6 @@ export default function Settings() {
                 </Button>
             </VStack>
         </View>
+    </TouchableWithoutFeedback>
     );
 }

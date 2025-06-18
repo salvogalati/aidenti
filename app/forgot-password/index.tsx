@@ -1,5 +1,5 @@
 import { VStack } from "@/components/ui/vstack";
-import { View, Text } from "react-native";
+import { View, Text, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { Image } from "expo-image";
 import { ArrowLeftIcon } from "@/components/ui/icon";
 import { useState } from "react";
@@ -31,6 +31,7 @@ export default function ForgotPassword() {
     const canSubmit = inputValue.email.trim().length > 0 && isValidEmail(inputValue.email);
 
     return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <VStack className="w-full h-full justify-center items-center relative">
             <View className="absolute w-full h-full top-0 left-0">
                 <Image blurRadius={5} className="object-cover" style={{ width: '100%', height: '100%' }} source={require('../assets/backgroundLogin.png')} />
@@ -72,5 +73,6 @@ export default function ForgotPassword() {
                 </HStack>
             </VStack>
         </VStack>
+    </TouchableWithoutFeedback>
     );
 }

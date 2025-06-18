@@ -171,7 +171,7 @@ const login = async (email: string, password: string, setMessage: React.Dispatch
 	}
 };
 
-const signin = async (email: string, password: string, setMessage: React.Dispatch<SetStateAction<string>>, setIsSending: React.Dispatch<SetStateAction<boolean>>) => {
+const signin = async (email: string, password: string, setMessage: React.Dispatch<SetStateAction<string>>, setIsSending: React.Dispatch<SetStateAction<boolean>>, router: Router) => {
 	try {
 
 		setIsSending(true);
@@ -189,7 +189,7 @@ const signin = async (email: string, password: string, setMessage: React.Dispatc
 			throw new Error(data.message || 'Signin failed');
 		}
 
-		setMessage(data.message)
+		router.push('/validate-user')
 
 	} catch (error) {
 		if (error instanceof Error) {
@@ -237,7 +237,7 @@ export const handleSubmit = (inputValue: IInputValue, isLoginPage: boolean, setI
 			return;
 		}
 
-		signin(inputValue.email, inputValue.confirmPassword, setMessage, setIsSending)
+		signin(inputValue.email, inputValue.confirmPassword, setMessage, setIsSending, router)
 	}
 };
 
