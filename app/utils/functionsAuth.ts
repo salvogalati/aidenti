@@ -189,7 +189,7 @@ const signin = async (email: string, password: string, setMessage: React.Dispatc
 			throw new Error(data.message || 'Signin failed');
 		}
 
-		router.push('/validate-user')
+		router.push(`/validate-user?email=${email}`)
 
 	} catch (error) {
 		if (error instanceof Error) {
