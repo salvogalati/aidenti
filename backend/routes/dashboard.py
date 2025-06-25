@@ -3,8 +3,8 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent))
 
-import utils
-from config import SUPABASE_KEY, SUPABASE_URL
+from utils import utils
+from config import SUPABASE_KEY, SUPABASE_URL, AVATAR_URI
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required
 from supabase import AuthApiError, Client, create_client
@@ -38,7 +38,7 @@ def first_access():
         "username": username,
         "date_of_birth": dob,
         "gender": gender,
-        "avatar_id": avatar_id,
+        "avatar_src": avatar_id,
     }
     missing = [field for field, value in required_fields.items() if not value]
     if missing:
@@ -51,8 +51,7 @@ def first_access():
             "username": username,
             "date_of_birth": dob,
             "gender": gender,
-            "avatar_id": avatar_id,
-            "first_access": True,
+            "avatar_src": f"{AVATAR_URI}{avatar_id}",
         }
         supabase.table("Dashboard").insert(insert_data).execute()
 
@@ -86,3 +85,54 @@ def get_userdata():
 
     user_data = dashboard_resp.data or {}
     return jsonify({"message": "User data retrieved", "user_data": user_data}), 200
+
+@dashboard_bp.route("/dashboard/change_username_avatar", methods=["PATCH"])
+@jwt_required()
+def change_username_avatar():
+    data = request.get_json() or {}
+    user_id   = data.get("id")
+    username  = data.get("username")
+    avatar_src = data.get("avatar_src") 
+
+    if not all([user_id, username, avatar_src]):
+        return jsonify({"message": "Missing required keys: id, username, avatar_src"}), 400
+
+    payload, error = utils.validate_user_token(request, user_id)
+    if error:
+        return error
+
+    try:
+        dup = (
+            supabase
+            .table("Dashboard")
+            .select("id")
+            .eq("username", username)
+            .neq("id", user_id)
+            .limit(1)
+            .execute()
+        )
+        if dup.error:
+            raise dup.error
+        if dup.data:
+            return jsonify({"message": "Username already exists"}), 409
+    except AuthApiError as e:
+        return jsonify({"message": f"Supabase error checking username: {e.message}"}), 500
+
+    # 4) Esegui l’update su Supabase
+    try:
+        res = (
+            supabase
+            .table("Dashboard")
+            .update({
+                "username": username,
+                "avatar_src": avatar_src
+            })
+            .eq("id", user_id)
+            .execute()
+        )
+        if res.error:
+            raise res.error
+    except AuthApiError as e:
+        return jsonify({"message": f"Supabase error updating record: {e.message}"}), 500
+
+    return jsonify({"message": "Data correctly changed"}), 200

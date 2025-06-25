@@ -1,6 +1,7 @@
-import jwt
-from flask import jsonify, Response, Request
 from typing import Any, Dict, Optional, Tuple
+
+import jwt
+from flask import Request, Response, jsonify
 
 
 def decode_supabase_token(token: str) -> Dict[str, Any]:
