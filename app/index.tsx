@@ -1,6 +1,6 @@
 import { Button, ButtonSpinner, ButtonText } from "@/components/ui/button";
 import { VStack } from "@/components/ui/vstack";
-import { Keyboard, Text, TouchableWithoutFeedback, View } from "react-native";
+import { Text, View } from "react-native";
 import React, { useEffect } from "react";
 import EmailInput from "./components/emailInput/emailInput";
 import PasswordInput from "./components/passwordInput/passwordInput";
@@ -14,6 +14,7 @@ import Monster from "./components/monster/monster";
 import colors from "tailwindcss/colors";
 import { Link, useRouter } from "expo-router";
 import { Box } from "./components/ui/box";
+import TouchableWithoutFeedbackProvider from "./components/touchableWithoutFeedback/touchableWithoutFeedback";
 
 export default function Auth() {
 	const [inputValue, setInputValue] = React.useState({
@@ -59,92 +60,92 @@ export default function Auth() {
 	}
 
 	return (
-	<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-		<VStack className="w-full h-full justify-center items-center relative">
-			{loading ? (
-				<>
-					<Image style={{ width: 320, height: 320 }} source={require('./assets/logoApp.png')} />
-					<Loader />
-				</>
-			) : (
-				<>
-					<View className="absolute w-full h-full top-0 left-0">
-						<Image blurRadius={5} className="object-cover" style={{ width: '100%', height: '100%' }} source={require('./assets/backgroundLogin.png')} />
-					</View>
-					<VStack className='w-full max-w-[300px]'>
-						<SwitchAuth
-							isLoginPage={isLoginPage}
-							setIsLoginPage={setIsLoginPage}
-							setInputValue={setInputValue}
-							setIsInvalid={setIsInvalid}
-							setShowPassword={setShowPassword}
-							setMessage={setMessage}
-							isSending={isSending}
-						/>
-
-						<VStack className="w-full rounded-bl-md rounded-br-md border border-background-200 p-4 relative bg-white">
-							<Monster classMonster={`absolute top-3 right-0 max-w-52 max-h-52 ${hasErrors ? 'animate-hesitate' : 'animate-walk-and-flip'}`} />
-							<Text style={{ fontFamily: 'IndieFlower_400Regular' }} className="text-[30px] mb-2 font-semibold">
-								{isLoginPage ? "Log in" : "Sign in"}
-							</Text>
-
-							<EmailInput
-								isInvalid={isInvalid}
-								inputValue={inputValue}
+		<TouchableWithoutFeedbackProvider>
+			<VStack className="w-full h-full justify-center items-center relative">
+				{loading ? (
+					<>
+						<Image style={{ width: 320, height: 320 }} source={require('./assets/logoApp.png')} />
+						<Loader />
+					</>
+				) : (
+					<>
+						<View className="absolute w-full h-full top-0 left-0">
+							<Image blurRadius={5} className="object-cover" style={{ width: '100%', height: '100%' }} source={require('./assets/backgroundLogin.png')} />
+						</View>
+						<VStack className='w-full max-w-[300px]'>
+							<SwitchAuth
+								isLoginPage={isLoginPage}
+								setIsLoginPage={setIsLoginPage}
 								setInputValue={setInputValue}
+								setIsInvalid={setIsInvalid}
+								setShowPassword={setShowPassword}
+								setMessage={setMessage}
+								isSending={isSending}
 							/>
 
-							<PasswordInput
-								isInvalid={isInvalid}
-								inputValue={inputValue}
-								setInputValue={setInputValue}
-								showPassword={showPassword}
-								handleState={() => handleState(setShowPassword)}
-							/>
+							<VStack className="w-full rounded-bl-md rounded-br-md border border-background-200 p-4 relative bg-white">
+								<Monster classMonster={`absolute top-3 right-0 max-w-52 max-h-52 ${hasErrors ? 'animate-hesitate' : 'animate-walk-and-flip'}`} />
+								<Text style={{ fontFamily: 'IndieFlower_400Regular' }} className="text-[30px] mb-2 font-semibold">
+									{isLoginPage ? "Log in" : "Sign in"}
+								</Text>
 
-							{!isLoginPage && (
-								<ConfirmPasswordInput
+								<EmailInput
+									isInvalid={isInvalid}
+									inputValue={inputValue}
+									setInputValue={setInputValue}
+								/>
+
+								<PasswordInput
 									isInvalid={isInvalid}
 									inputValue={inputValue}
 									setInputValue={setInputValue}
 									showPassword={showPassword}
 									handleState={() => handleState(setShowPassword)}
 								/>
-							)}
 
-							{
-								isLoginPage &&
-								<Box className="mt-1">
-									<Link href="/forgot-password" className="underline">
-										Forgot password?
-									</Link>
-								</Box>
-							}
+								{!isLoginPage && (
+									<ConfirmPasswordInput
+										isInvalid={isInvalid}
+										inputValue={inputValue}
+										setInputValue={setInputValue}
+										showPassword={showPassword}
+										handleState={() => handleState(setShowPassword)}
+									/>
+								)}
 
-							{
-								message &&
-								<Text className="text-end mt-2">
-									{message}
-								</Text>
-							}
-
-							<Button
-								className={`w-fit self-end mt-4 ${!canSubmit || isSending ? "opacity-50" : ""}`}
-								size="sm"
-								onPress={() => handleSubmit(inputValue, isLoginPage, setIsInvalid, setMessage, setIsSending, router)}
-								disabled={!canSubmit || isSending}
-							>
 								{
-									isSending &&
-									<ButtonSpinner color={colors.gray[400]} />
+									isLoginPage &&
+									<Box className="mt-1">
+										<Link href="/forgot-password" className="underline">
+											Forgot password?
+										</Link>
+									</Box>
 								}
-								<ButtonText>Submit</ButtonText>
-							</Button>
+
+								{
+									message &&
+									<Text className="text-end mt-2">
+										{message}
+									</Text>
+								}
+
+								<Button
+									className={`w-fit self-end mt-4 ${!canSubmit || isSending ? "opacity-50" : ""}`}
+									size="sm"
+									onPress={() => handleSubmit(inputValue, isLoginPage, setIsInvalid, setMessage, setIsSending, router)}
+									disabled={!canSubmit || isSending}
+								>
+									{
+										isSending &&
+										<ButtonSpinner color={colors.gray[400]} />
+									}
+									<ButtonText>Submit</ButtonText>
+								</Button>
+							</VStack>
 						</VStack>
-					</VStack>
-				</>
-			)}
-		</VStack>
-	</TouchableWithoutFeedback>
+					</>
+				)}
+			</VStack>
+		</TouchableWithoutFeedbackProvider>
 	);
 }

@@ -12,10 +12,11 @@ import Monster from "./components/monster/monster";
 import Avatars from "./components/avatars/avatars";
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { firstAccess } from "./utils/functionsFirstAccess";
-import { Keyboard, Text, TouchableWithoutFeedback, View } from "react-native";
+import { Text, View } from "react-native";
 import colors from "tailwindcss/colors";
 import { checkToken } from "@/utils/functionsAuth";
 import { Image } from "react-native";
+import TouchableWithoutFeedbackProvider from "@/components/touchableWithoutFeedback/touchableWithoutFeedback";
 
 export default function FirstAccessPage() {
 	const [fontsLoaded] = useFonts({
@@ -55,76 +56,76 @@ export default function FirstAccessPage() {
 	}
 
 	return (
-	<TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-		<VStack className="w-full h-full justify-center items-center relative">
-			<View className="absolute w-full h-full top-0 left-0">
-				<Image blurRadius={5} className="object-cover" style={{ width: '100%', height: '100%' }} source={require('./assets/bgForm.png')} />
-			</View>
-			<Box className="rounded-md bg-white border border-background-200 p-4 flex gap-1 relative w-[300px]">
-				<Monster classMonster={`absolute -top-24 left-0 max-w-52 max-h-52`} />
-				{
-					!avatarLayout ?
-						<>
-							<Username payload={payload} setPayload={setPayload} />
-
-							<Age payload={payload} setPayload={setPayload} />
-
-							<Sex payload={payload} setPayload={setPayload} />
-						</>
-						:
-						<Avatars payload={payload} setPayload={setPayload} />
-				}
-				{
-					message &&
-					<Text className="text-end">{message}</Text>
-				}
-				<HStack className="justify-end items-center gap-2 mt-4">
-					<ButtonGroup>
-						<Button
-							disabled={!canSubmit}
-							className={`${!canSubmit && 'opacity-50'}`}
-							onPress={() => {
-								setAvatarLayout(!avatarLayout);
-								setMessage('');
-							}}
-						>
-							{
-								avatarLayout && <ButtonIcon as={ArrowLeftIcon} />
-							}
-							<ButtonText>
-								{
-									!avatarLayout ?
-										'Next'
-										:
-										'Go Back'
-								}
-							</ButtonText>
-							{
-								!avatarLayout && <ButtonIcon as={ArrowRightIcon} />
-							}
-						</Button>
-					</ButtonGroup>
+		<TouchableWithoutFeedbackProvider>
+			<VStack className="w-full h-full justify-center items-center relative">
+				<View className="absolute w-full h-full top-0 left-0">
+					<Image blurRadius={5} className="object-cover" style={{ width: '100%', height: '100%' }} source={require('./assets/bgForm.png')} />
+				</View>
+				<Box className="rounded-md bg-white border border-background-200 p-4 flex gap-1 relative w-[300px]">
+					<Monster classMonster={`absolute -top-24 left-0 max-w-52 max-h-52`} />
 					{
-						avatarLayout &&
+						!avatarLayout ?
+							<>
+								<Username payload={payload} setPayload={setPayload} />
+
+								<Age payload={payload} setPayload={setPayload} />
+
+								<Sex payload={payload} setPayload={setPayload} />
+							</>
+							:
+							<Avatars payload={payload} setPayload={setPayload} />
+					}
+					{
+						message &&
+						<Text className="text-end">{message}</Text>
+					}
+					<HStack className="justify-end items-center gap-2 mt-4">
 						<ButtonGroup>
 							<Button
-								disabled={!(canSubmit && payload.avatar_id) || isSending}
-								className={`${!(canSubmit && payload.avatar_id) || isSending ? 'opacity-50' : ''}`}
-								onPress={() => firstAccess(payload, router, setMessage, setIsSending)}
+								disabled={!canSubmit}
+								className={`${!canSubmit && 'opacity-50'}`}
+								onPress={() => {
+									setAvatarLayout(!avatarLayout);
+									setMessage('');
+								}}
 							>
 								{
-									isSending &&
-									<ButtonSpinner color={colors.gray[400]} />
+									avatarLayout && <ButtonIcon as={ArrowLeftIcon} />
 								}
 								<ButtonText>
-									Send
+									{
+										!avatarLayout ?
+											'Next'
+											:
+											'Go Back'
+									}
 								</ButtonText>
+								{
+									!avatarLayout && <ButtonIcon as={ArrowRightIcon} />
+								}
 							</Button>
 						</ButtonGroup>
-					}
-				</HStack>
-			</Box>
-		</VStack>
-	</TouchableWithoutFeedback>
+						{
+							avatarLayout &&
+							<ButtonGroup>
+								<Button
+									disabled={!(canSubmit && payload.avatar_id) || isSending}
+									className={`${!(canSubmit && payload.avatar_id) || isSending ? 'opacity-50' : ''}`}
+									onPress={() => firstAccess(payload, router, setMessage, setIsSending)}
+								>
+									{
+										isSending &&
+										<ButtonSpinner color={colors.gray[400]} />
+									}
+									<ButtonText>
+										Send
+									</ButtonText>
+								</Button>
+							</ButtonGroup>
+						}
+					</HStack>
+				</Box>
+			</VStack>
+		</TouchableWithoutFeedbackProvider>
 	);
 }
