@@ -57,8 +57,8 @@ def first_access():
 
         return jsonify({"message": "Dashboard entry created", "id": user_id}), 200
 
-    except AuthApiError as e:
-        return jsonify({"message": f"Supabase error: {e.message}"}), 500
+    except Exception as e:
+        return jsonify({"message": "Username already exist", "supabase_error": f"Supabase error: {e.message}"}), 500
 
 
 @dashboard_bp.route("/api/get_userdata", methods=["POST"])
@@ -111,8 +111,6 @@ def change_username_avatar():
             .limit(1)
             .execute()
         )
-        if dup.error:
-            raise dup.error
         if dup.data:
             return jsonify({"message": "Username already exists"}), 409
     except AuthApiError as e:
@@ -130,8 +128,6 @@ def change_username_avatar():
             .eq("id", user_id)
             .execute()
         )
-        if res.error:
-            raise res.error
     except AuthApiError as e:
         return jsonify({"message": f"Supabase error updating record: {e.message}"}), 500
 

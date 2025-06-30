@@ -136,19 +136,19 @@ def refresh_token():
     )
 
 
-@login_signin_bp.route("/logout", methods=["GET"])
+@login_signin_bp.route("/logout", methods=["POST"])
 @jwt_required()
 def logout():
     data = request.get_json()
     access_token = data.get("access_token", "")
     refresh_token = data.get("refresh_token", "")
-
     try:
         supabase.auth.set_session(
-            {"access_token": access_token, "refresh_token": refresh_token}
+            access_token, refresh_token
         )
         supabase.auth.sign_out()
     except AuthApiError as e:
+        print(e)
         return jsonify(message=e.message), 500
 
     return jsonify(message="Logout successful"), 200
@@ -198,7 +198,7 @@ def forgot_password():
 
     try:
         # Trigger Supabase to send a password reset email
-        supabase.auth.reset_password_for_email(email)
+        supabase.auth.reset_password_for_email(email, )
         return jsonify({"message": "Password reset email sent"}), 200
 
     except AuthApiError as e:
