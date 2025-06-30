@@ -5,7 +5,7 @@ import { Platform } from "react-native";
 import * as SecureStore from 'expo-secure-store';
 import { TOKEN_KEYS } from "@/constans/tokensKeys";
 
-const getToken = async (key: string) => {
+export const getToken = async (key: string) => {
 	if (Platform.OS === 'web') {
 		return localStorage.getItem(key);
 	} else {

@@ -1,5 +1,5 @@
 import { TOKEN_KEYS } from "@/constans/tokensKeys";
-import { fetchWithAuth, removeToken } from "@/utils/functionsAuth";
+import { fetchWithAuth, getToken, removeToken } from "@/utils/functionsAuth";
 import { Router } from "expo-router";
 import IUpdateUserData from "../types/updateUserData";
 import { SetStateAction } from "react";
@@ -7,7 +7,12 @@ import { IUser } from "@/dashboard/context/types/user";
 
 export const logout = async (router: Router) => {
 	try {
-		const res = await fetchWithAuth('/logout', { method: 'GET' }, router);
+		const access_token = await getToken(TOKEN_KEYS.access)
+		const refresh_token = await getToken(TOKEN_KEYS.access)
+		const res = await fetchWithAuth('/logout', {
+			method: 'POST',
+			body: JSON.stringify({access_token, refresh_token}),
+		}, router);
 
 		if (!res.ok) {
 			throw new Error('Error during logout, please retry!');
