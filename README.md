@@ -1,7 +1,7 @@
 # AIdenti
 
  <p align="center">
-	<img src="https://github.com/nmarmugi/nicola-salvatore/blob/main/app/assets/logoApp.png?raw=true" alt="Descrizione" width="150"/>
+	<img src="https://raw.githubusercontent.com/salvogalati/aidenti/refs/heads/main/app/assets/logoApp.png" alt="Descrizione" width="150"/>
 </p>
 
 This repository contains the source code for the mobile application AIdenti and its associated backend. The app is developed using [Expo](https://expo.dev) (React Native) for the frontend and [Flask](https://flask.palletsprojects.com/) for the backend.
